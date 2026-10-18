@@ -16,6 +16,8 @@ import org.firstinspires.ftc.teamcode.util.Subsystem;
 
 public class Turret extends Subsystem {
     private final DcMotor turret;
+    private double lastTurretPower = 0;
+    private static final double MOTOR_CACHING_THRESHOLD = 0.02;
 
     private double targetAngleRadians = 0;
     private boolean enabled = true;
@@ -84,7 +86,10 @@ public class Turret extends Subsystem {
             double power = turnController.calculate(getTargetAngleRadians(), getActualAngleRadians());
 
             if (enabled) {
-                turret.setPower(power);
+                if (power == 0 && lastTurretPower != 0 || Math.abs(power - lastTurretPower) > MOTOR_CACHING_THRESHOLD) {
+                    turret.setPower(power);
+                    lastTurretPower = power;
+                }
             }
         });
     }
@@ -95,7 +100,9 @@ public class Turret extends Subsystem {
         double actualAngleDeg = Math.toDegrees(getActualAngleRadians());
         double angleErrorDeg = Math.toDegrees(getErrorRadians());
 
-        o.telemetry.addData("Turret - Angle", "Actual=%3.2f°, Target=%3.2f°, Error=%3.2f°", actualAngleDeg, targetAngleDeg, angleErrorDeg);
-        o.telemetry.addData("Turret - Is enabled", enabled ? "Yes" : "No");
+        o.telemetry.addLine("Turret:");
+        o.telemetry.addData("- Angle", "Actual=%3.2f°, Target=%3.2f°, Error=%3.2f°", actualAngleDeg, targetAngleDeg, angleErrorDeg);
+        o.telemetry.addData("- Last set power", lastTurretPower);
+        o.telemetry.addData("- Is enabled", enabled ? "Yes" : "No");
     }
 }
