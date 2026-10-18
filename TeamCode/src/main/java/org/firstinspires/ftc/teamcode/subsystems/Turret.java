@@ -2,15 +2,14 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.pedropathing.ivy.commands.Commands.infinite;
 
-import com.pedropathing.controllers.Controller;
 import com.pedropathing.controllers.PIDController;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.utils.Angle;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 import org.firstinspires.ftc.teamcode.util.hardware.DcMotorCaching;
 
@@ -35,10 +34,10 @@ public class Turret extends Subsystem {
         // Negative should be cw
     }
 
-    public Turret(OpMode o) {
-        super(o);
+    public Turret(Robot r) {
+        super(r);
 
-        turret = o.hardwareMap.get(DcMotorCaching.class, "turret");
+        turret = r.hardwareMap.get(DcMotorCaching.class, "turret");
         turret.setDirection(DcMotorSimple.Direction.FORWARD);
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         zero();
@@ -98,9 +97,9 @@ public class Turret extends Subsystem {
         double actualAngleDeg = Math.toDegrees(getActualAngleRadians());
         double angleErrorDeg = Math.toDegrees(getErrorRadians());
 
-        o.telemetry.addLine("Turret:");
-        o.telemetry.addData("- Angle", "Actual=%3.2f°, Target=%3.2f°, Error=%3.2f°", actualAngleDeg, targetAngleDeg, angleErrorDeg);
-        o.telemetry.addData("- Turret power", turret.getPower());
-        o.telemetry.addData("- Is enabled", enabled ? "Yes" : "No");
+        r.telemetry.addLine("Turret:");
+        r.telemetry.addData("- Angle", "Actual=%3.2f°, Target=%3.2f°, Error=%3.2f°", actualAngleDeg, targetAngleDeg, angleErrorDeg);
+        r.telemetry.addData("- Turret power", turret.getPower());
+        r.telemetry.addData("- Is enabled", enabled ? "Yes" : "No");
     }
 }

@@ -10,18 +10,18 @@ import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.ivy.pedro.PedroCommands;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 
 public class Drivetrain extends Subsystem {
     private final Follower follower;
 
-    public Drivetrain(OpMode o) {
-        super(o);
+    public Drivetrain(Robot r) {
+        super(r);
 
-        follower = Constants.create(o.hardwareMap);
+        follower = Constants.create(r.hardwareMap);
     }
 
     public void drive(DrivePowers powers, boolean hold) {
@@ -42,6 +42,11 @@ public class Drivetrain extends Subsystem {
         );
     }
 
+    public double getDistanceToGoal() {
+        return 0;
+        // TODO: Return actual distance to goal
+    }
+
     public Follower follower() { return follower; }
 
     @Override
@@ -51,21 +56,21 @@ public class Drivetrain extends Subsystem {
 
     @Override
     public void debug() {
-        o.telemetry.addLine("Drivetrain:");
-        o.telemetry.addData(
+        r.telemetry.addLine("Drivetrain:");
+        r.telemetry.addData(
                 "- Position",
                 "X=%3.2f, Y=%3.2f, H=%5.2f°",
                 getPose().x(),
                 getPose().y(),
                 getPose().heading()
         );
-        o.telemetry.addData(
+        r.telemetry.addData(
                 "- Velocity",
                 "X=%2.2f, Y=%2.2f, H=%3.2f",
                 follower.velocity().vx,
                 follower.velocity().vy,
                 follower.velocity().omega
         );
-        o.telemetry.addData("- Follower state", follower.mode().name());
+        r.telemetry.addData("- Follower state", follower.mode().name());
     }
 }

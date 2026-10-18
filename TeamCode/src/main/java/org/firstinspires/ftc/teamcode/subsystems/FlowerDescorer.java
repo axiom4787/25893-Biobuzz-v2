@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import static com.pedropathing.ivy.commands.Commands.instant;
+
 import com.pedropathing.ivy.Command;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import static com.pedropathing.ivy.commands.Commands.*;
-
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 import org.firstinspires.ftc.teamcode.util.hardware.ServoCaching;
 
@@ -15,10 +14,10 @@ public class FlowerDescorer extends Subsystem {
     private static final double STOWED_POSITION = 0.2;
     private static final double DEPLOYED_POSITION = 0.8;
 
-    public FlowerDescorer(OpMode o) {
-        super(o);
+    public FlowerDescorer(Robot r) {
+        super(r);
 
-        arm = o.hardwareMap.get(ServoCaching.class, "flowerDescorer");
+        arm = r.hardwareMap.get(ServoCaching.class, "flowerDescorer");
         arm.setPosition(STOWED_POSITION);
     }
 
@@ -32,6 +31,6 @@ public class FlowerDescorer extends Subsystem {
 
     @Override
     public void debug() {
-        o.telemetry.addData("Flower Descorer - Position", arm.getPosition() == STOWED_POSITION ? "Stowed" : "Deployed");
+        r.telemetry.addData("Flower Descorer - Position", arm.getPosition() == STOWED_POSITION ? "Stowed" : "Deployed");
     }
 }

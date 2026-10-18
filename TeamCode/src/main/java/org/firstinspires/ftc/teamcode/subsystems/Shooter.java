@@ -5,11 +5,11 @@ import static com.pedropathing.ivy.commands.Commands.instant;
 
 import com.pedropathing.controllers.Controller;
 import com.pedropathing.ivy.Command;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 import org.firstinspires.ftc.teamcode.util.hardware.DcMotorExCaching;
 
@@ -18,7 +18,6 @@ public class Shooter extends Subsystem {
     private final VoltageSensor voltageSensor;
 
     private State state = State.DISABLED;
-    private double distToGoal = 0.0;
 
     private final Controller velocityController = Controller.sum(
             Controller.staticFeedforward(0.01),
@@ -29,14 +28,14 @@ public class Shooter extends Subsystem {
     private static final double VOLTAGE_WHEN_TUNED = 13.0;
     private static final double IDLE_POWER = 0.5;
 
-    public Shooter(OpMode o) {
-        super(o);
+    public Shooter(Robot r) {
+        super(r);
 
-        shooter = o.hardwareMap.get(DcMotorExCaching.class, "shooter");
+        shooter = r.hardwareMap.get(DcMotorExCaching.class, "shooter");
         shooter.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        voltageSensor = o.hardwareMap.voltageSensor.iterator().next();
+        voltageSensor = r.hardwareMap.voltageSensor.iterator().next();
     }
 
     private enum State {
@@ -57,11 +56,8 @@ public class Shooter extends Subsystem {
         return instant(() -> state = State.ACTIVE);
     }
 
-    public void setDistToGoal(double distToGoal) {
-        this.distToGoal = distToGoal;
-    }
-
     public double getTargetVelocity() {
+        double distToGoal = r.drivetrain.getDistanceToGoal();
         // TODO: Find target velocity based on distance from goal
         return 0;
     }

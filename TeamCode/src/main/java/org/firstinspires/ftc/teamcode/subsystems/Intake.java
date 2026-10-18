@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.pedropathing.ivy.Command;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import static com.pedropathing.ivy.commands.Commands.*;
 
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 import org.firstinspires.ftc.teamcode.util.hardware.DcMotorCaching;
 
@@ -15,10 +14,10 @@ public class Intake extends Subsystem {
 
     private final DcMotorCaching intake;
 
-    public Intake(OpMode o) {
-        super(o);
+    public Intake(Robot r) {
+        super(r);
 
-        intake = o.hardwareMap.get(DcMotorCaching.class, "intake");
+        intake = r.hardwareMap.get(DcMotorCaching.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
@@ -52,6 +51,6 @@ public class Intake extends Subsystem {
 
     @Override
     public void debug() {
-        o.telemetry.addData("Intake - State", state.name());
+        r.telemetry.addData("Intake - State", state.name());
     }
 }

@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Blocker;
+import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.FlowerDescorer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
@@ -17,14 +18,15 @@ import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import java.util.List;
 
 public class Robot {
-    private final OpMode o;
-    private final HardwareMap map;
-    private final Telemetry telemetry;
+    public final OpMode o;
+    public final HardwareMap hardwareMap;
+    public final Telemetry telemetry;
 
     private final List<LynxModule> allHubs;
     private final ElapsedTime loopTimer = new ElapsedTime();
     private double lastLoopTime = 0;
 
+    public final Drivetrain drivetrain;
     public final Intake intake;
     public final Transfer transfer;
     public final Blocker blocker;
@@ -35,21 +37,25 @@ public class Robot {
     public Robot(OpMode o) {
         this.o = o;
         telemetry = o.telemetry;
-        map = o.hardwareMap;
+        hardwareMap = o.hardwareMap;
 
-        intake = new Intake(o);
-        transfer = new Transfer(o);
-        blocker = new Blocker(o);
-        descorer = new FlowerDescorer(o);
-        shooter = new Shooter(o);
-        turret = new Turret(o);
+        drivetrain = new Drivetrain(this);
+        intake = new Intake(this);
+        transfer = new Transfer(this);
+        blocker = new Blocker(this);
+        descorer = new FlowerDescorer(this);
+        shooter = new Shooter(this);
+        turret = new Turret(this);
 
         allHubs = o.hardwareMap.getAll(LynxModule.class);
         allHubs.forEach((m) -> m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
     }
 
     public void start() {
+        Scheduler.reset();
+
         Scheduler.schedule(
+                drivetrain.periodicCommand(),
                 intake.periodicCommand(),
                 transfer.periodicCommand(),
                 blocker.periodicCommand(),

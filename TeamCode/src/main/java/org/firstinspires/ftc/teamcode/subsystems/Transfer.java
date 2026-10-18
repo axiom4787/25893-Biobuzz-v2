@@ -4,10 +4,9 @@ import static com.pedropathing.ivy.commands.Commands.infinite;
 import static com.pedropathing.ivy.commands.Commands.instant;
 
 import com.pedropathing.ivy.Command;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 import org.firstinspires.ftc.teamcode.util.hardware.DcMotorCaching;
 
@@ -16,10 +15,10 @@ public class Transfer extends Subsystem {
 
     private State state = State.IDLE;
 
-    public Transfer(OpMode o) {
-        super(o);
+    public Transfer(Robot r) {
+        super(r);
 
-        transfer = o.hardwareMap.get(DcMotorCaching.class, "transfer");
+        transfer = r.hardwareMap.get(DcMotorCaching.class, "transfer");
         transfer.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
@@ -53,6 +52,6 @@ public class Transfer extends Subsystem {
 
     @Override
     public void debug() {
-        o.telemetry.addData("Transfer - State", state.name());
+        r.telemetry.addData("Transfer - State", state.name());
     }
 }
