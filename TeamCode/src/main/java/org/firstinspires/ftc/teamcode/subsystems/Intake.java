@@ -8,17 +8,17 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import static com.pedropathing.ivy.commands.Commands.*;
 
 import org.firstinspires.ftc.teamcode.util.Subsystem;
+import org.firstinspires.ftc.teamcode.util.hardware.DcMotorCaching;
 
 public class Intake extends Subsystem {
     private State state = State.IDLE;
-    private double lastPower = state.power;
 
-    private final DcMotor intake;
+    private final DcMotorCaching intake;
 
     public Intake(OpMode o) {
         super(o);
 
-        intake = o.hardwareMap.get(DcMotor.class, "intake");
+        intake = o.hardwareMap.get(DcMotorCaching.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
@@ -34,10 +34,7 @@ public class Intake extends Subsystem {
 
     public Command periodicCommand() {
         return infinite(() -> {
-            if (lastPower != state.power) {
-                intake.setPower(state.power);
-                lastPower = state.power;
-            }
+            intake.setPower(state.power);
         });
     }
 

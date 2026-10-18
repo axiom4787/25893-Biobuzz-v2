@@ -9,17 +9,17 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.util.Subsystem;
+import org.firstinspires.ftc.teamcode.util.hardware.DcMotorCaching;
 
 public class Transfer extends Subsystem {
-    private final DcMotor transfer;
+    private final DcMotorCaching transfer;
 
     private State state = State.IDLE;
-    private double lastPower = state.power;
 
     public Transfer(OpMode o) {
         super(o);
 
-        transfer = o.hardwareMap.get(DcMotor.class, "transfer");
+        transfer = o.hardwareMap.get(DcMotorCaching.class, "transfer");
         transfer.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
@@ -35,10 +35,7 @@ public class Transfer extends Subsystem {
 
     public Command periodicCommand() {
         return infinite(() -> {
-            if (lastPower != state.power) {
-                transfer.setPower(state.power);
-                lastPower = state.power;
-            }
+            transfer.setPower(state.power);
         });
     }
 

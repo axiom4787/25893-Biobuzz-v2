@@ -7,18 +7,19 @@ import com.pedropathing.controllers.Controller;
 import com.pedropathing.ivy.Command;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.util.Subsystem;
+import org.firstinspires.ftc.teamcode.util.hardware.DcMotorExCaching;
 
 public class Shooter extends Subsystem {
-    private final DcMotorEx shooter;
+    private final DcMotorExCaching shooter;
     private final VoltageSensor voltageSensor;
 
     private State state = State.DISABLED;
     private double distToGoal = 0.0;
+
     private final Controller velocityController = Controller.sum(
             Controller.staticFeedforward(0.01),
             Controller.proportionalFeedforward(0.01),
@@ -31,7 +32,7 @@ public class Shooter extends Subsystem {
     public Shooter(OpMode o) {
         super(o);
 
-        shooter = o.hardwareMap.get(DcMotorEx.class, "shooter");
+        shooter = o.hardwareMap.get(DcMotorExCaching.class, "shooter");
         shooter.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -60,6 +61,19 @@ public class Shooter extends Subsystem {
         this.distToGoal = distToGoal;
     }
 
+    public double getTargetVelocity() {
+        // TODO: Find target velocity based on distance from goal
+        return 0;
+    }
+
+    public double getActualVelocity() {
+        return shooter.getVelocity();
+    }
+
+    public double getVelocityError() {
+        return getActualVelocity() - getTargetVelocity();
+    }
+
     @Override
     public Command periodicCommand() {
         return infinite(() -> {
@@ -68,7 +82,13 @@ public class Shooter extends Subsystem {
             } else if (state == State.IDLE) {
                 shooter.setPower(IDLE_POWER);
             } else {
-                // TODO: Use PID, distance to goal, and voltage compensation to set optimal power;
+                double targetVelocity = getTargetVelocity();
+                double velocityError = getVelocityError();
+                double power = velocityController.calculate(targetVelocity, velocityError);
+
+                double currentVoltage = voltageSensor.getVoltage();
+                power = power * (VOLTAGE_WHEN_TUNED / currentVoltage);
+                shooter.setPower(power);
             }
         });
     }

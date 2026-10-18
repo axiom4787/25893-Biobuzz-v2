@@ -3,8 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.subsystems.FlowerDescorer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
@@ -16,6 +18,8 @@ import java.util.List;
 
 public class Robot {
     private final OpMode o;
+    private final HardwareMap map;
+    private final Telemetry telemetry;
 
     private final List<LynxModule> allHubs;
     private final ElapsedTime loopTimer = new ElapsedTime();
@@ -30,6 +34,8 @@ public class Robot {
 
     public Robot(OpMode o) {
         this.o = o;
+        telemetry = o.telemetry;
+        map = o.hardwareMap;
 
         intake = new Intake(o);
         transfer = new Transfer(o);

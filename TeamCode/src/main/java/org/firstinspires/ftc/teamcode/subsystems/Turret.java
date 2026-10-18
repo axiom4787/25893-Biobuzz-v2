@@ -12,12 +12,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.util.Subsystem;
+import org.firstinspires.ftc.teamcode.util.hardware.DcMotorCaching;
 
 
 public class Turret extends Subsystem {
-    private final DcMotor turret;
-    private double lastTurretPower = 0;
-    private static final double MOTOR_CACHING_THRESHOLD = 0.02;
+    private final DcMotorCaching turret;
 
     private double targetAngleRadians = 0;
     private boolean enabled = true;
@@ -39,7 +38,7 @@ public class Turret extends Subsystem {
     public Turret(OpMode o) {
         super(o);
 
-        turret = o.hardwareMap.get(DcMotor.class, "turret");
+        turret = o.hardwareMap.get(DcMotorCaching.class, "turret");
         turret.setDirection(DcMotorSimple.Direction.FORWARD);
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         zero();
@@ -86,10 +85,9 @@ public class Turret extends Subsystem {
             double power = turnController.calculate(getTargetAngleRadians(), getActualAngleRadians());
 
             if (enabled) {
-                if (power == 0 && lastTurretPower != 0 || Math.abs(power - lastTurretPower) > MOTOR_CACHING_THRESHOLD) {
-                    turret.setPower(power);
-                    lastTurretPower = power;
-                }
+                turret.setPower(power);
+            } else {
+                turret.setPower(0);
             }
         });
     }
@@ -102,7 +100,7 @@ public class Turret extends Subsystem {
 
         o.telemetry.addLine("Turret:");
         o.telemetry.addData("- Angle", "Actual=%3.2f°, Target=%3.2f°, Error=%3.2f°", actualAngleDeg, targetAngleDeg, angleErrorDeg);
-        o.telemetry.addData("- Last set power", lastTurretPower);
+        o.telemetry.addData("- Turret power", turret.getPower());
         o.telemetry.addData("- Is enabled", enabled ? "Yes" : "No");
     }
 }
