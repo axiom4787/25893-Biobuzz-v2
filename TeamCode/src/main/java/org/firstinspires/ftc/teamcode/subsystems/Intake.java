@@ -2,31 +2,24 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.pedropathing.ivy.Command;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple.Direction;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import static com.pedropathing.ivy.commands.Commands.*;
 
-public class Intake {
-    private final OpMode o;
+import org.firstinspires.ftc.teamcode.util.Subsystem;
+
+public class Intake extends Subsystem {
     private State state = State.IDLE;
+    private double lastPower = state.power;
 
     private final DcMotor intake;
-    private final CRServo lServo, rServo;
-
 
     public Intake(OpMode o) {
-        this.o = o;
+        super(o);
 
         intake = o.hardwareMap.get(DcMotor.class, "intake");
-        intake.setDirection(Direction.FORWARD);
-
-        lServo = o.hardwareMap.get(CRServo.class, "lIntake");
-        lServo.setDirection(Direction.FORWARD);
-
-        rServo = o.hardwareMap.get(CRServo.class, "rIntake");
-        rServo.setDirection(Direction.FORWARD);
+        intake.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     private enum State {
@@ -39,9 +32,12 @@ public class Intake {
         private final int power;
     }
 
-    public Command update() {
+    public Command periodicCommand() {
         return infinite(() -> {
-            intake.setPower(state.power);
+            if (lastPower != state.power) {
+                intake.setPower(state.power);
+                lastPower = state.power;
+            }
         });
     }
 
@@ -55,5 +51,10 @@ public class Intake {
 
     public Command idle() {
         return instant(() -> state = State.IDLE);
+    }
+
+    @Override
+    public void debug() {
+        o.telemetry.addData("Intake - State", state.name());
     }
 }
