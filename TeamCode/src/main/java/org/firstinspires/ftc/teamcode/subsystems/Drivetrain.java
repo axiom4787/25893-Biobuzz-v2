@@ -10,9 +10,10 @@ import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.ivy.pedro.PedroCommands;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
+import com.skeletonarmy.marrow.zones.PolygonZone;
 
 import org.firstinspires.ftc.teamcode.Robot;
-import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.util.Constants;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 
 public class Drivetrain extends Subsystem {
@@ -21,7 +22,7 @@ public class Drivetrain extends Subsystem {
     public Drivetrain(Robot r) {
         super(r);
 
-        follower = Constants.create(r.hardwareMap);
+        follower = org.firstinspires.ftc.teamcode.pedro.Constants.create(r.hardwareMap);
     }
 
     public void drive(DrivePowers powers, boolean hold) {
@@ -43,8 +44,19 @@ public class Drivetrain extends Subsystem {
     }
 
     public double getDistanceToGoal() {
-        return 0;
-        // TODO: Return actual distance to goal
+        Pose robotPose = getPose();
+        Pose goalPose = robotPose.y() > Constants.HALF_FIELD_WIDTH ? Constants.LEFT_GOAL : Constants.RIGHT_GOAL;
+
+        double dx = robotPose.x() - goalPose.x();
+        double dy = robotPose.y() - goalPose.y();
+
+        return Math.hypot(dx, dy);
+    }
+
+    public boolean isInScoringZone() {
+        PolygonZone robotZone = new PolygonZone(16, 16);
+        robotZone.setRotation(getPose().heading());
+        return robotZone.isFullyInside(Constants.LEFT_SCORING_ZONE) || robotZone.isFullyInside(Constants.LEFT_SCORING_ZONE);
     }
 
     public Follower follower() { return follower; }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.pedropathing.math.Pose;
 import com.skeletonarmy.marrow.zones.CompositeZone;
 import com.skeletonarmy.marrow.zones.Point;
 import com.skeletonarmy.marrow.zones.PolygonZone;
@@ -49,5 +50,22 @@ public class Constants {
                             HALF_FIELD_WIDTH + HALF_HIVE_FRAME_SUPPORT_LENGTH
                     )
             )
+    );
+
+    public static final double RIGHT_GOAL_Y = 55;
+    public static final double LEFT_GOAL_Y = FIELD_WIDTH - 55;
+    public static final Pose RIGHT_GOAL = new Pose(58, RIGHT_GOAL_Y);
+    public static final Pose LEFT_GOAL = new Pose(58, LEFT_GOAL_Y);
+    public static final PolygonZone RIGHT_SCORING_ZONE = new PolygonZone(
+            new Point(0, 0),
+            new Point(FIELD_WIDTH, 0),
+            new Point(FIELD_WIDTH, RIGHT_GOAL_Y),
+            new Point(0, RIGHT_GOAL_Y)
+    );
+    public static final PolygonZone LEFT_SCORING_ZONE = new PolygonZone(
+            new Point(0, FIELD_WIDTH),
+            new Point(FIELD_WIDTH, FIELD_WIDTH),
+            new Point(FIELD_WIDTH, LEFT_GOAL_Y),
+            new Point(0, LEFT_GOAL_Y)
     );
 }
