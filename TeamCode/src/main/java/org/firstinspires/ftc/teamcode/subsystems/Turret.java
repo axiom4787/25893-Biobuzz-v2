@@ -21,8 +21,8 @@ public class Turret extends Subsystem {
     private boolean enabled = true;
     private final PIDController turnController = new PIDController(0.01, 0, 0);
 
-    private static final double CCW_LIMIT_RAD = Math.toRadians(60);
-    private static final double CW_LIMIT_RAD = Math.toRadians(-60);
+    private static final double CCW_LIMIT_RAD = Math.toRadians(100);
+    private static final double CW_LIMIT_RAD = Math.toRadians(-100);
     private static final double MOTOR_TICKS_PER_TURRET_ROTATION;
     static {
         double TICKS_PER_MOTOR_ROTATION = 537.7; // 537.7 ticks per full drive motor rotation.
@@ -75,7 +75,7 @@ public class Turret extends Subsystem {
     }
 
     public double getErrorRadians() {
-        return getActualAngleRadians() - getTargetAngleRadians();
+        return getTargetAngleRadians() - getActualAngleRadians();
     }
 
     @Override

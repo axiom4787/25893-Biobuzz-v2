@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.pedropathing.ivy.Command;
+import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.Scheduler;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -14,8 +16,13 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Transfer;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.util.Constants;
+
+import static com.pedropathing.ivy.commands.Commands.*;
+import static com.pedropathing.ivy.groups.Groups.*;
 
 import java.util.List;
+import java.util.function.BooleanSupplier;
 
 public class Robot {
     public final OpMode o;
@@ -83,6 +90,54 @@ public class Robot {
         shooter.debug();
         turret.debug();
 
-        o.telemetry.addData("Misc - Last loop time (ms)", lastLoopTime);
+        telemetry.addData("Misc - Last loop time (ms)", lastLoopTime);
+        telemetry.update();
+    }
+
+    public Command shootAll() {
+        return sequential(
+                shooter.enable(),
+                race(
+                        waitUntil(shooter::isReady), // wait to get up to speed
+                        waitMs(800) // wait a max of 800ms to spin up
+                ),
+                transfer.in(),
+                blocker.unblock(),
+                waitMs(Constants.SHOOT_TIME),
+                transfer.idle(),
+                blocker.block()
+        ).requiring(shooter, transfer);
+    }
+
+    /// @param done Whether to stop attempting to collect pollen from the ground (ex: () -> gamepad1.aWasReleased())
+    public Command collectGround(BooleanSupplier done) {
+        return new CommandBuilder()
+                .setStart(() -> {
+                    intake.in();
+                    transfer.in();
+                })
+                .setEnd((endCondition) -> {
+                    intake.idle();
+                    transfer.idle();
+                })
+                .setDone(done)
+                .requiring(intake, transfer);
+    }
+
+    /// @param done Whether to stop attempting to collect pollen from a flower (ex: () -> gamepad1.aWasReleased())
+    public Command collectFlower(BooleanSupplier done) {
+        return new CommandBuilder()
+                .setStart(() -> {
+                    intake.in();
+                    transfer.in();
+                    descorer.deploy();
+                })
+                .setEnd((endCondition) -> {
+                    intake.idle();
+                    transfer.idle();
+                    descorer.stow();
+                })
+                .setDone(done)
+                .requiring(intake, transfer, descorer);
     }
 }

@@ -17,7 +17,7 @@ public class Shooter extends Subsystem {
     private final DcMotorExCaching shooter;
     private final VoltageSensor voltageSensor;
 
-    private State state = State.DISABLED;
+    private boolean active = true;
 
     private final Controller velocityController = Controller.sum(
             Controller.staticFeedforward(0.01),
@@ -44,16 +44,16 @@ public class Shooter extends Subsystem {
         ACTIVE; // Power sent to shooter based on distance to goal
     }
 
-    public Command setDisabled() {
-        return instant(() -> state = State.DISABLED);
+    public Command disable() {
+        return instant(() -> active = false);
     }
 
-    public Command setIdle() {
-        return instant(() -> state = State.IDLE);
+    public Command enable() {
+        return instant(() -> active = true);
     }
 
-    public Command setActive() {
-        return instant(() -> state = State.ACTIVE);
+    public boolean isReady() {
+        return getVelocityError() < 150;
     }
 
     public double getTargetVelocity() {
@@ -67,16 +67,14 @@ public class Shooter extends Subsystem {
     }
 
     public double getVelocityError() {
-        return getActualVelocity() - getTargetVelocity();
+        return getTargetVelocity() - getActualVelocity();
     }
 
     @Override
     public Command periodicCommand() {
         return infinite(() -> {
-            if (state == State.DISABLED) {
+            if (!active) {
                 shooter.setPower(0);
-            } else if (state == State.IDLE) {
-                shooter.setPower(IDLE_POWER);
             } else {
                 double targetVelocity = getTargetVelocity();
                 double velocityError = getVelocityError();

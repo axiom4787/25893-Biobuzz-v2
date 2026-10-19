@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
+import com.pedropathing.api.Paths;
 import com.pedropathing.math.Pose;
 import com.skeletonarmy.marrow.zones.CompositeZone;
 import com.skeletonarmy.marrow.zones.Point;
@@ -68,4 +69,8 @@ public class Constants {
             new Point(FIELD_WIDTH, LEFT_GOAL_Y),
             new Point(0, LEFT_GOAL_Y)
     );
+
+    public static final double SHOOT_TIME = 1000;
+    public static final double FLOWER_INTAKE_TIME = 2000;
+    public static final double GARDEN_INTAKE_TIME = 800;
 }
