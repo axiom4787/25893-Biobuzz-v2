@@ -109,35 +109,45 @@ public class Robot {
         ).requiring(shooter, transfer);
     }
 
-    /// @param done Whether to stop attempting to collect pollen from the ground (ex: () -> gamepad1.aWasReleased())
-    public Command collectGround(BooleanSupplier done) {
+    /// @param isDone Whether to stop attempting to collect pollen from the ground (ex: () -> gamepad1.aWasReleased())
+    public Command collectGround(BooleanSupplier isDone) {
         return new CommandBuilder()
-                .setStart(() -> {
-                    intake.in();
-                    transfer.in();
-                })
-                .setEnd((endCondition) -> {
-                    intake.idle();
-                    transfer.idle();
-                })
-                .setDone(done)
+                .setStart(() -> Scheduler.schedule(
+                        intake.in(),
+                        transfer.in()
+                ))
+                .setEnd((endCondition) -> Scheduler.schedule(
+                        intake.idle(),
+                        transfer.idle()
+                ))
+                .setDone(isDone)
                 .requiring(intake, transfer);
     }
 
-    /// @param done Whether to stop attempting to collect pollen from a flower (ex: () -> gamepad1.aWasReleased())
-    public Command collectFlower(BooleanSupplier done) {
+    /// @param isDone Whether to stop attempting to collect pollen from a flower (ex: () -> gamepad1.aWasReleased())
+    public Command collectFlower(BooleanSupplier isDone) {
         return new CommandBuilder()
-                .setStart(() -> {
-                    intake.in();
-                    transfer.in();
-                    descorer.deploy();
-                })
-                .setEnd((endCondition) -> {
-                    intake.idle();
-                    transfer.idle();
-                    descorer.stow();
-                })
-                .setDone(done)
+                .setStart(() -> Scheduler.schedule(
+                        intake.in(),
+                        transfer.in(),
+                        descorer.deploy()
+                ))
+                .setEnd((endCondition) -> Scheduler.schedule(
+                        intake.idle(),
+                        transfer.idle(),
+                        descorer.stow()
+                ))
+                .setDone(isDone)
                 .requiring(intake, transfer, descorer);
+    }
+
+    public Command disable() {
+        return instant(() -> Scheduler.schedule(
+                intake.idle(),
+                transfer.idle(),
+                turret.disable(),
+                shooter.disable(),
+                instant(() -> drivetrain.follower().stop())
+        )).setPriority(25893).requiring(intake, transfer, blocker, descorer, turret, shooter, drivetrain);
     }
 }

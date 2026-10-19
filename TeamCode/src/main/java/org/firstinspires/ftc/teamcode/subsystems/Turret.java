@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.pedropathing.ivy.commands.Commands.infinite;
+import static com.pedropathing.ivy.commands.Commands.instant;
 
 import com.pedropathing.controllers.PIDController;
 import com.pedropathing.ivy.Command;
@@ -48,20 +49,16 @@ public class Turret extends Subsystem {
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     };
 
-    public void setTargetAngleRadians(double angleRadians) {
-        double normalized = Angle.normalizeSigned(angleRadians);
-        if (Math.abs(normalized) > Math.toRadians(150)) {
-            return; // Don't change the turret target if it would be in the 60 degrees behind zero
-        }
-        targetAngleRadians = Range.clip(normalized, CW_LIMIT_RAD, CCW_LIMIT_RAD);
-    }
-
     public double getTargetAngleRadians() {
         return targetAngleRadians;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public Command enable() {
+        return instant(() -> enabled = true);
+    }
+
+    public Command disable() {
+        return instant(() -> enabled = false);
     }
 
     public boolean getEnabled() {
@@ -81,6 +78,8 @@ public class Turret extends Subsystem {
     @Override
     public Command periodicCommand() {
         return infinite(() -> {
+            // TODO: Update targetAngleRadians based on the robot's position on the field
+            // TODO: SOTM
             double power = turnController.calculate(getTargetAngleRadians(), getActualAngleRadians());
 
             if (enabled) {

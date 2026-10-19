@@ -38,12 +38,6 @@ public class Shooter extends Subsystem {
         voltageSensor = r.hardwareMap.voltageSensor.iterator().next();
     }
 
-    private enum State {
-        DISABLED, // Power set to zero so that the shooter can't shoot
-        IDLE, // Power set to 0.5 to be ready to spin up, but not using a ton of power by always being spun up
-        ACTIVE; // Power sent to shooter based on distance to goal
-    }
-
     public Command disable() {
         return instant(() -> active = false);
     }

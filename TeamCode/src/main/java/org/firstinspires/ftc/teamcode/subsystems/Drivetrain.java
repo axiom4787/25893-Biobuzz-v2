@@ -27,7 +27,7 @@ public class Drivetrain extends Subsystem {
 
     public void drive(DrivePowers powers, boolean hold) {
         if (hold) {
-            ManualDrive.driveOrHold(follower, powers);
+            ManualDrive.driveOrHold(follower, powers, 0.0, 0.2);
         } else {
             follower.manual(powers);
         }

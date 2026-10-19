@@ -48,19 +48,22 @@ public class Auto1 extends LinearOpMode {
                         robot.collectFlower(() -> false)
                 ),
 
-                follow(f, Paths.ALLIANCE_FLOWER_TO_LEFT_HIVE_SCORE), // put flower descorer up while moving
+                follow(f, Paths.ALLIANCE_FLOWER_TO_LEFT_HIVE_SCORE),
                 robot.shootAll(),
 
-                race(
+                race( // Move to other flower, score, and park
                         sequential(
                                 follow(f, Paths.LEFT_HIVE_SCORE_TO_OTHER_FLOWER), // put flower descorer down while shooting
+                                robot.intake.in(),
                                 robot.shootAll(),
+                                robot.intake.idle(),
+                                waitMs(Constants.FLOWER_INTAKE_TIME + Constants.SHOOT_TIME),
                                 follow(f, Paths.OTHER_FLOWER_TO_PARK)
                         ),
-                        robot.collectFlower(() -> false)
+                        robot.collectFlower(() -> false) // I don't know if this will work because both collectFlower and shootAll require the transfer subsystem
                 ),
 
-                robot.shooter.disable()
+                robot.disable()
         ));
 
         while (opModeIsActive()) {
@@ -79,6 +82,7 @@ public class Auto1 extends LinearOpMode {
         private static final Pose LEFT_HIVE_ALLIANCE_FLOWER_CTRL = f.of(32, 47, 0);
         private static final Pose ALLIANCE_FLOWER = f.of(15, 47, 180);
         private static final Pose LEFT_HIVE_SCORE = f.of(39, 111, 90);
+
         private static final Path GARDEN_TO_LEFT_HIVE_SCORE = line(GARDEN, LEFT_HIVE_SCORE).linear(GARDEN, LEFT_HIVE_SCORE);
         private static final Path LEFT_HIVE_SCORE_TO_ALLIANCE_FLOWER = curve(LEFT_HIVE_SCORE, LEFT_HIVE_ALLIANCE_FLOWER_CTRL, ALLIANCE_FLOWER).linear(LEFT_HIVE_SCORE, ALLIANCE_FLOWER);
         private static final Path ALLIANCE_FLOWER_TO_LEFT_HIVE_SCORE = line(ALLIANCE_FLOWER, LEFT_HIVE_SCORE).linear(ALLIANCE_FLOWER, LEFT_HIVE_SCORE.withHeading(90));
@@ -87,6 +91,4 @@ public class Auto1 extends LinearOpMode {
         private static final Pose PARK = f.of(13, 97, 90);
         private static final Path OTHER_FLOWER_TO_PARK = line(OTHER_FLOWER, PARK).linear(OTHER_FLOWER, PARK);
     }
-
-
 }
