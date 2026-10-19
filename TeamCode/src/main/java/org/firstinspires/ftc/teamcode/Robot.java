@@ -94,13 +94,14 @@ public class Robot {
         telemetry.update();
     }
 
+    /// Shoot all possessed game elements
     public Command shootAll() {
         return sequential(
                 shooter.enable(),
                 race(
                         waitUntil(shooter::isReady), // wait to get up to speed
                         waitMs(800) // wait a max of 800ms to spin up
-                ),
+                ).unless(shooter::isReady), // ... unless the shooter is already ready
                 transfer.in(),
                 blocker.unblock(),
                 waitMs(Constants.SHOOT_TIME),
@@ -141,6 +142,7 @@ public class Robot {
                 .requiring(intake, transfer, descorer);
     }
 
+    /// Disable the robot
     public Command disable() {
         return instant(() -> Scheduler.schedule(
                 intake.idle(),
