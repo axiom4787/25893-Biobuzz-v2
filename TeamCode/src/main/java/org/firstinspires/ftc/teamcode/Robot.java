@@ -94,8 +94,13 @@ public class Robot {
         telemetry.update();
     }
 
-    /// Shoot all possessed game elements
+    /// Shoot all possessed game elements (for Constants.SHOOT_TIME)
     public Command shootAll() {
+        return shootAll(0);
+    }
+
+    /// Shoot all possessed game elements (for Constants.SHOOT_TIME plus additionalShootTime)
+    public Command shootAll(double additionalShootTime) {
         return sequential(
                 shooter.enable(),
                 race(
@@ -104,7 +109,7 @@ public class Robot {
                 ).unless(shooter::isReady), // ... unless the shooter is already ready
                 transfer.in(),
                 blocker.unblock(),
-                waitMs(Constants.SHOOT_TIME),
+                waitMs(Constants.SHOOT_TIME + additionalShootTime),
                 transfer.idle(),
                 blocker.block()
         ).requiring(shooter, transfer);

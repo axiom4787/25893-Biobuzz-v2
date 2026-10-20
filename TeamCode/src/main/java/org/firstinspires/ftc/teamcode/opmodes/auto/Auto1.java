@@ -51,17 +51,14 @@ public class Auto1 extends LinearOpMode {
                 follow(f, Paths.ALLIANCE_FLOWER_TO_LEFT_HIVE_SCORE),
                 robot.shootAll(),
 
-                race( // Move to other flower, score, and park
-                        sequential(
-                                follow(f, Paths.LEFT_HIVE_SCORE_TO_OTHER_FLOWER), // put flower descorer down while shooting
-                                robot.intake.in(),
-                                robot.shootAll(),
-                                robot.intake.idle(),
-                                waitMs(Constants.FLOWER_INTAKE_TIME + Constants.SHOOT_TIME),
-                                follow(f, Paths.OTHER_FLOWER_TO_PARK)
-                        ),
-                        robot.collectFlower(() -> false) // I don't know if this will work because both collectFlower and shootAll require the transfer subsystem
-                ),
+                robot.descorer.deploy(),
+                follow(f, Paths.LEFT_HIVE_SCORE_TO_OTHER_FLOWER),
+                robot.intake.in(),
+                robot.shootAll(Constants.FLOWER_INTAKE_TIME),
+                robot.intake.idle(),
+                waitMs(Constants.FLOWER_INTAKE_TIME + Constants.SHOOT_TIME),
+                follow(f, Paths.OTHER_FLOWER_TO_PARK),
+                robot.descorer.stow(),
 
                 robot.disable()
         ));
