@@ -24,40 +24,38 @@ public class Auto1 extends LinearOpMode {
 
         robot.start();
 
-        Follower f = robot.drivetrain.follower();
-
         Scheduler.schedule(sequential(
                 robot.shootAll(),
 
                 race( // Go to the garden (and wait a little) while collecting pollen from the ground
                         sequential(
-                                follow(f, Paths.START_TO_GARDEN),
+                                robot.follow(Paths.START_TO_GARDEN),
                                 waitMs(Constants.GARDEN_INTAKE_TIME)
                         ),
                         robot.collectGround(() -> false)
                 ),
 
-                follow(f, Paths.GARDEN_TO_LEFT_HIVE_SCORE),
+                robot.follow(Paths.GARDEN_TO_LEFT_HIVE_SCORE),
                 robot.shootAll(),
 
                 race( // Move to alliance wall flower and descore it by running the intake and transfer
                         sequential(
-                                follow(f, Paths.LEFT_HIVE_SCORE_TO_ALLIANCE_FLOWER),
+                                robot.follow(Paths.LEFT_HIVE_SCORE_TO_ALLIANCE_FLOWER),
                                 waitMs(Constants.FLOWER_INTAKE_TIME)
                         ),
                         robot.collectFlower(() -> false)
                 ),
 
-                follow(f, Paths.ALLIANCE_FLOWER_TO_LEFT_HIVE_SCORE),
+                robot.follow(Paths.ALLIANCE_FLOWER_TO_LEFT_HIVE_SCORE),
                 robot.shootAll(),
 
                 robot.descorer.deploy(),
-                follow(f, Paths.LEFT_HIVE_SCORE_TO_OTHER_FLOWER),
+                robot.follow(Paths.LEFT_HIVE_SCORE_TO_OTHER_FLOWER),
                 robot.intake.in(),
                 robot.shootAll(Constants.FLOWER_INTAKE_TIME),
                 robot.intake.idle(),
                 waitMs(Constants.FLOWER_INTAKE_TIME + Constants.SHOOT_TIME),
-                follow(f, Paths.OTHER_FLOWER_TO_PARK),
+                robot.follow(Paths.OTHER_FLOWER_TO_PARK),
                 robot.descorer.stow(),
 
                 robot.disable()

@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.Scheduler;
+import com.pedropathing.ivy.pedro.PedroCommands;
+import com.pedropathing.paths.Path;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -156,5 +158,10 @@ public class Robot {
                 shooter.disable(),
                 instant(() -> drivetrain.follower().stop())
         )).setPriority(25893).requiring(intake, transfer, blocker, descorer, turret, shooter, drivetrain);
+    }
+
+    /// Follow a path
+    public Command follow(Path path) {
+        return PedroCommands.follow(drivetrain.follower(), path);
     }
 }
