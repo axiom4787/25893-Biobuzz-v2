@@ -43,9 +43,13 @@ public class Drivetrain extends Subsystem {
         );
     }
 
+    public Pose getGoalPose() {
+        return getPose().y() > Constants.HALF_FIELD_WIDTH ? Constants.LEFT_GOAL : Constants.RIGHT_GOAL;
+    }
+
     public double getDistanceToGoal() {
         Pose robotPose = getPose();
-        Pose goalPose = robotPose.y() > Constants.HALF_FIELD_WIDTH ? Constants.LEFT_GOAL : Constants.RIGHT_GOAL;
+        Pose goalPose = getGoalPose();
 
         double dx = robotPose.x() - goalPose.x();
         double dy = robotPose.y() - goalPose.y();

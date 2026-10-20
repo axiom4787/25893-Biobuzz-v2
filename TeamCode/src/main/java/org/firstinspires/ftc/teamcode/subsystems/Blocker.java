@@ -29,8 +29,12 @@ public class Blocker extends Subsystem {
         return instant(() -> blocker.setPosition(UNBLOCKING_POSITION));
     }
 
+    public boolean isBlocking() {
+        return blocker.getPosition() == BLOCKING_POSITION;
+    }
+
     @Override
     public void debug() {
-        r.telemetry.addData("Blocker - State", blocker.getPosition() == BLOCKING_POSITION ? "Blocking" : "Not blocking");
+        r.telemetry.addData("Blocker - State", isBlocking() ? "Blocking" : "Not blocking");
     }
 }

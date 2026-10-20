@@ -29,8 +29,12 @@ public class FlowerDescorer extends Subsystem {
         return instant(() -> arm.setPosition(DEPLOYED_POSITION));
     }
 
+    public boolean isDeployed() {
+        return arm.getPosition() == DEPLOYED_POSITION;
+    }
+
     @Override
     public void debug() {
-        r.telemetry.addData("Flower Descorer - Position", arm.getPosition() == STOWED_POSITION ? "Stowed" : "Deployed");
+        r.telemetry.addData("Flower Descorer - Position", isDeployed() ? "Deployed" : "Stowed");
     }
 }
