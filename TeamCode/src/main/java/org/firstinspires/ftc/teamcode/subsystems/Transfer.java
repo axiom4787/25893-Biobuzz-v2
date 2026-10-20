@@ -32,12 +32,6 @@ public class Transfer extends Subsystem {
         private final int power;
     }
 
-    public Command periodicCommand() {
-        return infinite(() -> {
-            transfer.setPower(state.power);
-        });
-    }
-
     public Command in() {
         return instant(() -> state = State.IN);
     }
@@ -48,6 +42,11 @@ public class Transfer extends Subsystem {
 
     public Command idle() {
         return instant(() -> state = State.IDLE);
+    }
+
+    @Override
+    public void periodic() {
+        transfer.setPower(state.power);
     }
 
     @Override

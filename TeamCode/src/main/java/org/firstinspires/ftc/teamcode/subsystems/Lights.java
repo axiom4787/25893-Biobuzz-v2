@@ -47,36 +47,6 @@ public class Lights extends Subsystem {
         state = State.OFF;
     }
 
-    @Override
-    public Command periodicCommand() {
-        return infinite(() -> {
-            State lastState = state;
-
-            double turretErrDeg = Math.toDegrees(Math.abs(r.turret.getErrorRadians()));
-            if (!r.drivetrain.isInScoringZone()) {
-                state = State.OUTSIDE_LAUNCH_ZONE;
-            } else if (!r.blocker.isBlocking()) {
-                state = State.SHOOTING;
-            } else if (!r.turret.canAchieveUnclippedTarget()) {
-                state = State.OUTSIDE_TURRET_RANGE;
-            } else if (turretErrDeg <= 2) {
-                state = State.AIM_BAR_FULL;
-            } else if (turretErrDeg <= 5) {
-                state = State.AIM_BAR_8;
-            } else if (turretErrDeg <= 8) {
-                state = State.AIM_BAR_6;
-            } else if (turretErrDeg <= 12) {
-                state = State.AIM_BAR_4;
-            } else {
-                state = State.AIM_BAR_EMPTY;
-            }
-
-            if (state == lastState) return;
-
-            // TODO: Actually update the light strip
-        });
-    }
-
     private PrismAnimations.Solid greenBar(int width) {
         PrismAnimations.Solid greenBar = new PrismAnimations.Solid(Color.GREEN);
 
@@ -86,5 +56,33 @@ public class Lights extends Subsystem {
         greenBar.setIndexes(startIndex, stopIndex);
 
         return greenBar;
+    }
+
+    @Override
+    public void periodic() {
+        State lastState = state;
+
+        double turretErrDeg = Math.toDegrees(Math.abs(r.turret.getErrorRadians()));
+        if (!r.drivetrain.isInScoringZone()) {
+            state = State.OUTSIDE_LAUNCH_ZONE;
+        } else if (!r.blocker.isBlocking()) {
+            state = State.SHOOTING;
+        } else if (!r.turret.canAchieveUnclippedTarget()) {
+            state = State.OUTSIDE_TURRET_RANGE;
+        } else if (turretErrDeg <= 2) {
+            state = State.AIM_BAR_FULL;
+        } else if (turretErrDeg <= 5) {
+            state = State.AIM_BAR_8;
+        } else if (turretErrDeg <= 8) {
+            state = State.AIM_BAR_6;
+        } else if (turretErrDeg <= 12) {
+            state = State.AIM_BAR_4;
+        } else {
+            state = State.AIM_BAR_EMPTY;
+        }
+
+        if (state == lastState) return;
+
+        // TODO: Actually update the light strip
     }
 }

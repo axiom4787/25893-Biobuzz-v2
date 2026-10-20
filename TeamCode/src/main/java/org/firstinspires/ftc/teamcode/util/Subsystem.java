@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import com.pedropathing.ivy.Command;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.firstinspires.ftc.teamcode.Robot;
 
 public abstract class Subsystem {
@@ -23,8 +20,7 @@ public abstract class Subsystem {
     public void debug() {}
 
     /**
-     * Command to run infinitely during the opmode main loop.
-     * Usually, return [Commands.]infinite(() -> { ... });
+     * Code to run infinitely during the opmode main loop.
      */
-    public Command periodicCommand() { return null; }
+    public void periodic() {}
 }

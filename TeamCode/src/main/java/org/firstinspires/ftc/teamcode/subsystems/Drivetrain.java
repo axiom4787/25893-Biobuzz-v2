@@ -66,8 +66,8 @@ public class Drivetrain extends Subsystem {
     public Follower follower() { return follower; }
 
     @Override
-    public Command periodicCommand() {
-        return infinite(follower::update);
+    public void periodic() {
+        follower.update();
     }
 
     @Override

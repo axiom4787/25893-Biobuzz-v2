@@ -61,15 +61,15 @@ public class Robot {
     public void start() {
         Scheduler.reset();
 
-        Scheduler.schedule(
-                drivetrain.periodicCommand(),
-                intake.periodicCommand(),
-                transfer.periodicCommand(),
-                blocker.periodicCommand(),
-                descorer.periodicCommand(),
-                shooter.periodicCommand(),
-                turret.periodicCommand()
-        );
+        Scheduler.schedule(infinite(() -> {
+                drivetrain.periodic();
+                intake.periodic();
+                transfer.periodic();
+                blocker.periodic();
+                descorer.periodic();
+                shooter.periodic();
+                turret.periodic();
+        }));
 
         loopTimer.reset();
     }

@@ -83,41 +83,39 @@ public class Turret extends Subsystem {
     }
 
     @Override
-    public Command periodicCommand() {
-        return infinite(() -> {
-            Pose robotPose = r.drivetrain.getPose();
-            double robotHeading = robotPose.heading();
-            double robotX = robotPose.x();
-            double robotY = robotPose.y();
+    public void periodic() {
+        Pose robotPose = r.drivetrain.getPose();
+        double robotHeading = robotPose.heading();
+        double robotX = robotPose.x();
+        double robotY = robotPose.y();
 
-            // Get turret in field space using the robot's pose and how far behind the center of the robot the turret is
-            double turretOffset = 3.0; // 3 inches behind center of robot
-            double turretX = robotX - turretOffset * Math.cos(robotHeading);
-            double turretY = robotY - turretOffset * Math.sin(robotHeading);
+        // Get turret in field space using the robot's pose and how far behind the center of the robot the turret is
+        double turretOffset = 3.0; // 3 inches behind center of robot
+        double turretX = robotX - turretOffset * Math.cos(robotHeading);
+        double turretY = robotY - turretOffset * Math.sin(robotHeading);
 
-            // Get the heading towards the goal using trig
-            Pose goalPose = r.drivetrain.getGoalPose();
-            double diffX = goalPose.x() - turretX;
-            double diffY = goalPose.y() - turretY;
-            double headingTowardsGoal = Math.atan2(diffY, diffX);
+        // Get the heading towards the goal using trig
+        Pose goalPose = r.drivetrain.getGoalPose();
+        double diffX = goalPose.x() - turretX;
+        double diffY = goalPose.y() - turretY;
+        double headingTowardsGoal = Math.atan2(diffY, diffX);
 
-            // Clip target to the maximum range of the turret
-            double unclippedTargetAngleRadians = Angle.normalizeSigned(headingTowardsGoal - robotHeading);
-            double clipped = Range.clip(unclippedTargetAngleRadians, CW_LIMIT_RAD, CCW_LIMIT_RAD);
-            canAchieveTarget = unclippedTargetAngleRadians == clipped;
-            clippedTargetAngleRadians = clipped;
+        // Clip target to the maximum range of the turret
+        double unclippedTargetAngleRadians = Angle.normalizeSigned(headingTowardsGoal - robotHeading);
+        double clipped = Range.clip(unclippedTargetAngleRadians, CW_LIMIT_RAD, CCW_LIMIT_RAD);
+        canAchieveTarget = unclippedTargetAngleRadians == clipped;
+        clippedTargetAngleRadians = clipped;
 
-            // TODO: SOTM
-            double power = turnController.calculate(getClippedTargetAngleRadians(), getErrorRadians());
-            if (Math.abs(power) < 0.01) power = 0;
+        // TODO: SOTM
+        double power = turnController.calculate(getClippedTargetAngleRadians(), getErrorRadians());
+        if (Math.abs(power) < 0.01) power = 0;
 
-            if (enabled) {
-                // TODO: Disable motor if in dead zone and has low velocity (not correcting and not SOTM)
-                turret.setPower(power);
-            } else {
-                turret.setPower(0);
-            }
-        });
+        if (enabled) {
+            // TODO: Disable motor if in dead zone and has low velocity (not correcting and not SOTM)
+            turret.setPower(power);
+        } else {
+            turret.setPower(0);
+        }
     }
 
     @Override

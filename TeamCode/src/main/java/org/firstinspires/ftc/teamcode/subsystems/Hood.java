@@ -13,7 +13,6 @@ public class Hood extends Subsystem {
     private final ServoCaching hood;
 
     private boolean enabled = true;
-    private double lastSetPosition = Double.NaN;
 
     public Hood(Robot r) {
         super(r);
@@ -30,10 +29,8 @@ public class Hood extends Subsystem {
     }
 
     @Override
-    public Command periodicCommand() {
-        return infinite(() -> {
-            double distToGoal = r.drivetrain.getDistanceToGoal();
-            // TODO: Do math to determine hood position to set
-        });
+    public void periodic() {
+        double distToGoal = r.drivetrain.getDistanceToGoal();
+        // TODO: Do math to determine hood position to set
     }
 }

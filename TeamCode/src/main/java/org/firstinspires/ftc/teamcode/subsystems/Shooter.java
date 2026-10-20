@@ -65,19 +65,17 @@ public class Shooter extends Subsystem {
     }
 
     @Override
-    public Command periodicCommand() {
-        return infinite(() -> {
-            if (!active) {
-                shooter.setPower(0);
-            } else {
-                double targetVelocity = getTargetVelocity();
-                double velocityError = getVelocityError();
-                double power = velocityController.calculate(targetVelocity, velocityError);
+    public void periodic() {
+        if (!active) {
+            shooter.setPower(0);
+        } else {
+            double targetVelocity = getTargetVelocity();
+            double velocityError = getVelocityError();
+            double power = velocityController.calculate(targetVelocity, velocityError);
 
-                double currentVoltage = voltageSensor.getVoltage();
-                power = power * (VOLTAGE_WHEN_TUNED / currentVoltage);
-                shooter.setPower(power);
-            }
-        });
+            double currentVoltage = voltageSensor.getVoltage();
+            power = power * (VOLTAGE_WHEN_TUNED / currentVoltage);
+            shooter.setPower(power);
+        }
     }
 }

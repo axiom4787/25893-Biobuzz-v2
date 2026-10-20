@@ -31,12 +31,6 @@ public class Intake extends Subsystem {
         private final int power;
     }
 
-    public Command periodicCommand() {
-        return infinite(() -> {
-            intake.setPower(state.power);
-        });
-    }
-
     public Command in() {
         return instant(() -> state = State.IN);
     }
@@ -47,6 +41,11 @@ public class Intake extends Subsystem {
 
     public Command idle() {
         return instant(() -> state = State.IDLE);
+    }
+
+    @Override
+    public void periodic() {
+        intake.setPower(state.power);
     }
 
     @Override
