@@ -85,4 +85,9 @@ public class Lights extends Subsystem {
 
         // TODO: Actually update the light strip
     }
+
+    @Override
+    public void debug() {
+        r.telemetry.addData("Lights - State", state.name());
+    }
 }

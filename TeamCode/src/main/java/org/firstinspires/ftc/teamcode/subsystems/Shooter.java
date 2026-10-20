@@ -78,4 +78,12 @@ public class Shooter extends Subsystem {
             shooter.setPower(power);
         }
     }
+
+    @Override
+    public void debug() {
+        r.telemetry.addLine("Shooter");
+        r.telemetry.addData("- Actual Velocity", "%4f", getActualVelocity());
+        r.telemetry.addData("- Target Velocity", "%4f", getTargetVelocity());
+        r.telemetry.addData("- Velocity Error", "%4f", getVelocityError());
+    }
 }

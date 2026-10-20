@@ -33,4 +33,9 @@ public class Hood extends Subsystem {
         double distToGoal = r.drivetrain.getDistanceToGoal();
         // TODO: Do math to determine hood position to set
     }
+
+    @Override
+    public void debug() {
+        r.telemetry.addData("Hood - Position", "%1.2f", hood.getPosition());
+    }
 }
