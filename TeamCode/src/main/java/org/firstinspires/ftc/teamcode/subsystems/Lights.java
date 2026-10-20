@@ -1,12 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import com.pedropathing.ivy.Command;
-
-import static com.pedropathing.ivy.commands.Commands.infinite;
-
 
 import org.firstinspires.ftc.teamcode.Prism.Color;
 import org.firstinspires.ftc.teamcode.Prism.GoBildaPrismDriver;
+import org.firstinspires.ftc.teamcode.Prism.GoBildaPrismDriver.LayerHeight;
 
 import org.firstinspires.ftc.teamcode.Prism.PrismAnimations;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -17,24 +14,24 @@ public class Lights extends Subsystem {
 
     private State state;
     private enum State {
-        AIM_BAR_FULL(true, 10),
-        AIM_BAR_8(true, 8),
-        AIM_BAR_6(true, 6),
-        AIM_BAR_4(true, 4),
-        AIM_BAR_2(true, 2),
-        AIM_BAR_EMPTY(true, 0),
-        OUTSIDE_LAUNCH_ZONE(false, -1),
-        OUTSIDE_TURRET_RANGE(false, -1),
-        SHOOTING(false, -1),
-        OFF(false, -1);
+        AIM_BAR_FULL(10),
+        AIM_BAR_8(8),
+        AIM_BAR_6(6),
+        AIM_BAR_4(4),
+        AIM_BAR_2(2),
+        AIM_BAR_EMPTY( 0),
+        OUTSIDE_LAUNCH_ZONE(-1),
+        OUTSIDE_TURRET_RANGE(-1),
+        SHOOTING(-1),
+        OFF(-1);
 
-        State(boolean isAimBar, int barWidth) {
-            this.isAimBar = isAimBar;
-            this.barWidth = barWidth;
+        State(int aimBarWidth) {
+            this.aimBarWidth = aimBarWidth;
         }
 
-        private final boolean isAimBar;
-        private final int barWidth;
+        final int aimBarWidth;
+
+        static int NO_BAR_SENTINEL = -1;
     }
 
     private static final PrismAnimations.Solid RED_BACKGROUND = new PrismAnimations.Solid(Color.RED);
@@ -77,6 +74,8 @@ public class Lights extends Subsystem {
             state = State.AIM_BAR_6;
         } else if (turretErrDeg <= 12) {
             state = State.AIM_BAR_4;
+        } else if (turretErrDeg <= 20) {
+            state = State.AIM_BAR_2;
         } else {
             state = State.AIM_BAR_EMPTY;
         }
@@ -84,6 +83,24 @@ public class Lights extends Subsystem {
         if (state == lastState) return;
 
         // TODO: Actually update the light strip
+
+        lights.clearAllAnimations();
+
+        if (state.aimBarWidth != State.NO_BAR_SENTINEL) {
+            lights.insertAnimation(LayerHeight.LAYER_0, RED_BACKGROUND);
+            lights.insertAnimation(LayerHeight.LAYER_1, greenBar(state.aimBarWidth));
+        } else if (state == State.OUTSIDE_TURRET_RANGE) {
+            PrismAnimations.Blink purpleBlink = new PrismAnimations.Blink(Color.PURPLE);
+            lights.insertAnimation(LayerHeight.LAYER_0, purpleBlink);
+        } else if (state == State.OUTSIDE_LAUNCH_ZONE) {
+            PrismAnimations.Solid solidYellow = new PrismAnimations.Solid(Color.YELLOW);
+            lights.insertAnimation(LayerHeight.LAYER_0, solidYellow);
+        } else if (state == State.SHOOTING) {
+            PrismAnimations.Rainbow rainbow = new PrismAnimations.Rainbow();
+            lights.insertAnimation(LayerHeight.LAYER_0, rainbow);
+        }
+
+        lights.updateAllAnimations();
     }
 
     @Override
