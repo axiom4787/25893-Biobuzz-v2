@@ -49,7 +49,12 @@ public class Teleop extends LinearOpMode {
 
             // Shoot stored game elements
             if (gamepad1.rightTriggerWasPressed()) {
-                robot.shootAll().schedule();
+                if (robot.drivetrain.isInScoringZone()
+                        && Math.abs(robot.turret.getErrorDegrees()) < 12
+                        && robot.shooter.isReady()
+                ) {
+                    robot.shootAll().schedule();
+                }
             }
 
             lastGamepad1.copy(gamepad1);

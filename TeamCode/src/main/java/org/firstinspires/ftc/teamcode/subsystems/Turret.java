@@ -85,6 +85,10 @@ public class Turret extends Subsystem {
         return getClippedTargetAngleRadians() - getActualAngleRadians();
     }
 
+    public double getErrorDegrees() {
+        return Math.toDegrees(getErrorRadians());
+    }
+
     @Override
     public void periodic() {
         Pose robotPose = r.drivetrain.getPose();
