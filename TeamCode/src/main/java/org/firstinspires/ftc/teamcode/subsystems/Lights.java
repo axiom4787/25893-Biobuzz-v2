@@ -33,7 +33,7 @@ public class Lights extends Subsystem {
 
         final int aimBarWidth;
 
-        static int NO_BAR_SENTINEL = -1;
+        static final int NO_BAR_SENTINEL = -1;
     }
 
     private static final PrismAnimations.Solid RED_BACKGROUND = new PrismAnimations.Solid(Color.RED);
@@ -83,8 +83,6 @@ public class Lights extends Subsystem {
         }
 
         if (state == lastState) return;
-
-        // TODO: Actually update the light strip
 
         lights.clearAllAnimations();
 

@@ -30,8 +30,8 @@ public class Turret extends Subsystem {
     private static final double MOTOR_TICKS_PER_TURRET_ROTATION;
 
     static {
-        double TICKS_PER_MOTOR_ROTATION = 537.7; // 537.7 ticks per full drive motor rotation.
-        double GEAR_RATIO = 1.0 / 3.0; // Input gear teeth / output gear teeth
+        double TICKS_PER_MOTOR_ROTATION = 537.7; // 537.7 ticks per full drive motor rotation (312 RPM motor).
+        double GEAR_RATIO = 1.0 / 3.0; // Placeholder, Input gear teeth / output gear teeth
 
         MOTOR_TICKS_PER_TURRET_ROTATION = TICKS_PER_MOTOR_ROTATION / GEAR_RATIO;
         // A target angle of zero should be facing straight backwards
@@ -43,7 +43,7 @@ public class Turret extends Subsystem {
         super(r);
 
         turret = r.hardwareMap.get(DcMotorCaching.class, "turret");
-        turret.setDirection(DcMotorSimple.Direction.FORWARD);
+        turret.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         zero();
     }
@@ -52,8 +52,6 @@ public class Turret extends Subsystem {
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
-
-    ;
 
     public double getClippedTargetAngleRadians() {
         return clippedTargetAngleRadians;

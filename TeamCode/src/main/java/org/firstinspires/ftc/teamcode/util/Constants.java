@@ -73,4 +73,13 @@ public class Constants {
     public static final double SHOOT_TIME = 1000;
     public static final double FLOWER_INTAKE_TIME = 2000;
     public static final double GARDEN_INTAKE_TIME = 800;
+
+    // Limelight / HiveVision Camera Calibration Constants
+    public static final double LIMELIGHT_X_OFFSET = 6.0;   // inches forward from robot center
+    public static final double LIMELIGHT_Y_OFFSET = 0.0;   // inches left from robot center
+    public static final double LIMELIGHT_Z_OFFSET = 10.0;  // inches above ground to camera lens
+    public static final double LIMELIGHT_PITCH_DEG = -20.0; // camera pitch angle in degrees (negative = tilted down)
+    public static final double LIMELIGHT_YAW_DEG = 0.0;     // camera yaw offset in degrees relative to robot forward
+
+    public static final double BALL_RADIUS = 1.5;           // ball center height above ground in inches
 }

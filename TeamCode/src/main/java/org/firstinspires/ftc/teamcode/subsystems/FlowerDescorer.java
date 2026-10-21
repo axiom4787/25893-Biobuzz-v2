@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.util.hardware.ServoCaching;
 public class FlowerDescorer extends Subsystem {
     private final ServoCaching arm;
 
-    private static final double STOWED_POSITION = 0.2;
-    private static final double DEPLOYED_POSITION = 0.8;
+    private static final double STOWED_POSITION = 0.2; // Placeholder
+    private static final double DEPLOYED_POSITION = 0.8; // Placeholder
 
     public FlowerDescorer(Robot r) {
         super(r);

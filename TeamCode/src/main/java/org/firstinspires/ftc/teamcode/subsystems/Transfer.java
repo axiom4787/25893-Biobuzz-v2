@@ -19,8 +19,8 @@ public class Transfer extends Subsystem {
     public Transfer(Robot r) {
         super(r);
 
-        transfer = r.hardwareMap.<DcMotorCaching>get(DcMotorCaching.class, "transfer");
-        transfer.setDirection(DcMotorSimple.Direction.FORWARD);
+        transfer = r.hardwareMap.get(DcMotorCaching.class, "transfer");
+        transfer.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
     }
 
     private enum State {

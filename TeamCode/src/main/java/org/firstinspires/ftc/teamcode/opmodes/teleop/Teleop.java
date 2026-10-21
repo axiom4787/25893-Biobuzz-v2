@@ -13,8 +13,6 @@ import org.firstinspires.ftc.teamcode.Robot;
 public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
-        Gamepad lastGamepad1 = new Gamepad();
-
         Robot robot = new Robot(this);
 
         waitForStart();
@@ -56,8 +54,6 @@ public class Teleop extends LinearOpMode {
                     robot.shootAll().schedule();
                 }
             }
-
-            lastGamepad1.copy(gamepad1);
         }
     }
 }

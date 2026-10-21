@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.util.hardware.ServoCaching;
 public class Blocker extends Subsystem {
     private final ServoCaching blocker;
 
-    private static final double BLOCKING_POSITION = 0.2;
-    private static final double UNBLOCKING_POSITION = 0.8;
+    private static final double BLOCKING_POSITION = 0.2; // Placeholder
+    private static final double UNBLOCKING_POSITION = 0.8; // Placeholder
 
     public Blocker(Robot r) {
         super(r);

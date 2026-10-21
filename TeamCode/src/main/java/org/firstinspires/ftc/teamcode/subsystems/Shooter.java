@@ -27,13 +27,12 @@ public class Shooter extends Subsystem {
     );
 
     private static final double VOLTAGE_WHEN_TUNED = 13.0;
-    private static final double IDLE_POWER = 0.5;
 
     public Shooter(Robot r) {
         super(r);
 
         shooter = r.hardwareMap.get(DcMotorExCaching.class, "shooter");
-        shooter.setDirection(DcMotorSimple.Direction.FORWARD);
+        shooter.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         voltageSensor = r.hardwareMap.voltageSensor.iterator().next();

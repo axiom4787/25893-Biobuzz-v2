@@ -40,12 +40,6 @@ public class Drivetrain extends Subsystem {
         follower.setPose(pose);
     }
 
-    public void follow(Path path) {
-        Scheduler.schedule(
-                PedroCommands.follow(follower, path)
-        );
-    }
-
     public Pose getGoalPose() {
         return getPose().y() > Constants.HALF_FIELD_WIDTH ? Constants.LEFT_GOAL : Constants.RIGHT_GOAL;
     }
