@@ -1,11 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static com.pedropathing.ivy.commands.Commands.infinite;
 
 import com.pedropathing.drivetrain.DrivePowers;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.ManualDrive;
-import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.ivy.pedro.PedroCommands;
 import com.pedropathing.math.Pose;
@@ -15,6 +13,7 @@ import com.skeletonarmy.marrow.zones.PolygonZone;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Constants;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
+
 
 public class Drivetrain extends Subsystem {
     private final Follower follower;
@@ -33,9 +32,13 @@ public class Drivetrain extends Subsystem {
         }
     }
 
-    public Pose getPose() { return follower.pose(); }
+    public Pose getPose() {
+        return follower.pose();
+    }
 
-    public void setPose(Pose pose) { follower.setPose(pose); }
+    public void setPose(Pose pose) {
+        follower.setPose(pose);
+    }
 
     public void follow(Path path) {
         Scheduler.schedule(
@@ -63,7 +66,9 @@ public class Drivetrain extends Subsystem {
         return robotZone.isFullyInside(Constants.LEFT_SCORING_ZONE) || robotZone.isFullyInside(Constants.LEFT_SCORING_ZONE);
     }
 
-    public Follower follower() { return follower; }
+    public Follower follower() {
+        return follower;
+    }
 
     @Override
     public void periodic() {

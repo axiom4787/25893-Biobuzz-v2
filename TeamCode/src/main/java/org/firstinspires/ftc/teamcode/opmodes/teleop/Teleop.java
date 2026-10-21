@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
-import com.pedropathing.drivetrain.DrivePowers;
+
 import com.pedropathing.follower.ManualDrive;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.Robot;
+
 
 @TeleOp
 public class Teleop extends LinearOpMode {

@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import static com.pedropathing.ivy.commands.Commands.*;
+import static com.pedropathing.ivy.groups.Groups.*;
+
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.Scheduler;
@@ -20,11 +23,9 @@ import org.firstinspires.ftc.teamcode.subsystems.Transfer;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.teamcode.util.Constants;
 
-import static com.pedropathing.ivy.commands.Commands.*;
-import static com.pedropathing.ivy.groups.Groups.*;
-
 import java.util.List;
 import java.util.function.BooleanSupplier;
+
 
 public class Robot {
     public final OpMode o;
@@ -64,13 +65,13 @@ public class Robot {
         Scheduler.reset();
 
         Scheduler.schedule(infinite(() -> {
-                drivetrain.periodic();
-                intake.periodic();
-                transfer.periodic();
-                blocker.periodic();
-                descorer.periodic();
-                shooter.periodic();
-                turret.periodic();
+            drivetrain.periodic();
+            intake.periodic();
+            transfer.periodic();
+            blocker.periodic();
+            descorer.periodic();
+            shooter.periodic();
+            turret.periodic();
         }));
 
         loopTimer.reset();

@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static com.pedropathing.ivy.commands.Commands.infinite;
+
 import static com.pedropathing.ivy.commands.Commands.instant;
 
 import com.pedropathing.ivy.Command;
@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 import org.firstinspires.ftc.teamcode.util.hardware.DcMotorCaching;
 
+
 public class Transfer extends Subsystem {
     private final DcMotorCaching transfer;
 
@@ -18,7 +19,7 @@ public class Transfer extends Subsystem {
     public Transfer(Robot r) {
         super(r);
 
-        transfer = r.hardwareMap.get(DcMotorCaching.class, "transfer");
+        transfer = r.hardwareMap.<DcMotorCaching>get(DcMotorCaching.class, "transfer");
         transfer.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 

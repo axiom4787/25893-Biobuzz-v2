@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static com.pedropathing.ivy.commands.Commands.infinite;
+
 import static com.pedropathing.ivy.commands.Commands.instant;
 
 import com.pedropathing.controllers.PIDController;
@@ -28,6 +28,7 @@ public class Turret extends Subsystem {
     private static final double CCW_LIMIT_RAD = Math.toRadians(100);
     private static final double CW_LIMIT_RAD = Math.toRadians(-100);
     private static final double MOTOR_TICKS_PER_TURRET_ROTATION;
+
     static {
         double TICKS_PER_MOTOR_ROTATION = 537.7; // 537.7 ticks per full drive motor rotation.
         double GEAR_RATIO = 1.0 / 3.0; // Input gear teeth / output gear teeth
@@ -50,7 +51,9 @@ public class Turret extends Subsystem {
     public void zero() {
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-    };
+    }
+
+    ;
 
     public double getClippedTargetAngleRadians() {
         return clippedTargetAngleRadians;

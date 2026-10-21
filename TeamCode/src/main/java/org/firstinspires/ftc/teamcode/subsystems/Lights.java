@@ -9,17 +9,19 @@ import org.firstinspires.ftc.teamcode.Prism.PrismAnimations;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 
+
 public class Lights extends Subsystem {
     private final GoBildaPrismDriver lights;
 
     private State state;
+
     private enum State {
         AIM_BAR_FULL(10),
         AIM_BAR_8(8),
         AIM_BAR_6(6),
         AIM_BAR_4(4),
         AIM_BAR_2(2),
-        AIM_BAR_EMPTY( 0),
+        AIM_BAR_EMPTY(0),
         OUTSIDE_LAUNCH_ZONE(-1),
         OUTSIDE_TURRET_RANGE(-1),
         SHOOTING(-1),

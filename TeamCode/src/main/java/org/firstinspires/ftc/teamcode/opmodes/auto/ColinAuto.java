@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+
 import static com.pedropathing.api.Paths.*;
-import static com.pedropathing.ivy.groups.Groups.*;
-import static com.pedropathing.ivy.pedro.PedroCommands.follow;
 import static com.pedropathing.ivy.commands.Commands.*;
+import static com.pedropathing.ivy.groups.Groups.*;
 
 import com.pedropathing.api.PoseFactory;
-import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
@@ -15,6 +14,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Constants;
+
 
 @Autonomous
 public class ColinAuto extends LinearOpMode {

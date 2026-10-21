@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static com.pedropathing.ivy.commands.Commands.infinite;
-import static com.pedropathing.ivy.commands.Commands.instant;
+
+import static com.pedropathing.ivy.commands.Commands.*;
 
 import com.pedropathing.controllers.Controller;
 import com.pedropathing.ivy.Command;
@@ -12,6 +12,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 import org.firstinspires.ftc.teamcode.util.hardware.DcMotorExCaching;
+
 
 public class Shooter extends Subsystem {
     private final DcMotorExCaching shooter;
