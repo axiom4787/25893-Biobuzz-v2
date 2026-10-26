@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import com.qualcomm.robotcore.util.Range;
+
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 import org.firstinspires.ftc.teamcode.util.hardware.ServoCaching;
@@ -36,6 +38,7 @@ public class Hood extends Subsystem {
 
     @Override
     public void debug() {
-        r.telemetry.addData("Hood - Position", "%1.2f", hood.getPosition());
+        double pos = Range.scale(hood.getPosition(), DOWN_POSITION, UP_POSITION, 0, 1);
+        r.telemetry.addData("Hood - Position", "%1.2f", pos);
     }
 }
