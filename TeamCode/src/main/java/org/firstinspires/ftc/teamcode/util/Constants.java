@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import com.pedropathing.api.Paths;
 import com.pedropathing.math.Pose;
 import com.skeletonarmy.marrow.zones.CompositeZone;
 import com.skeletonarmy.marrow.zones.Point;
 import com.skeletonarmy.marrow.zones.PolygonZone;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 
 public class Constants {
     public static final double FIELD_WIDTH = 141.5;
@@ -70,6 +72,19 @@ public class Constants {
             new Point(0, LEFT_GOAL_Y)
     );
 
+    // center of the hive's front face
+    // adjusted a bit down because there is less valid scoring area in the top triangle than in the bottom rectangle
+    public static final Position RED_RIGHT_HIVE_TARGET = new Position(DistanceUnit.INCH,
+            58.8976, 55.1654, 58.3307, 0);
+    public static final Position RED_LEFT_HIVE_TARGET = new Position(DistanceUnit.INCH,
+            RED_RIGHT_HIVE_TARGET.x, HALF_FIELD_WIDTH-RED_RIGHT_HIVE_TARGET.y, RED_RIGHT_HIVE_TARGET.z, 0);
+    public static final Position BLUE_LEFT_HIVE_TARGET = new Position(DistanceUnit.INCH,
+            HALF_FIELD_WIDTH-RED_RIGHT_HIVE_TARGET.x, RED_RIGHT_HIVE_TARGET.y, RED_RIGHT_HIVE_TARGET.z, 0);
+    public static final Position BLUE_RIGHT_HIVE_TARGET = new Position(DistanceUnit.INCH,
+            HALF_FIELD_WIDTH-RED_RIGHT_HIVE_TARGET.x, HALF_FIELD_WIDTH-RED_RIGHT_HIVE_TARGET.y, RED_RIGHT_HIVE_TARGET.z, 0);
+
+
+    // TODO: NEED HEAVY TUNING
     public static final double SHOOT_TIME = 1000;
     public static final double FLOWER_INTAKE_TIME = 2000;
     public static final double GARDEN_INTAKE_TIME = 800;
