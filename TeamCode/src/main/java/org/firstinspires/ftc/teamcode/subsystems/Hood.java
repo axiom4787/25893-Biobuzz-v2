@@ -15,6 +15,7 @@ public class Hood extends Subsystem {
 
     private static final double UP_POSITION = 0.8; // Placeholder
     private static final double DOWN_POSITION = 0.2; // Placeholder
+    private double percentPos = 0; // scaled, down pos = 0.0, up pos = 1.0
 
     public Hood(Robot r) {
         super(r);
@@ -32,13 +33,13 @@ public class Hood extends Subsystem {
 
     @Override
     public void periodic() {
-        double distToGoal = r.drivetrain.getDistanceToGoal();
-        // TODO: Do math to determine hood position to set
+        percentPos = r.sotm.getHoodPosition();
+        double actualPos = Range.scale(percentPos, 0, 1, DOWN_POSITION, UP_POSITION);
+        hood.setPosition(actualPos);
     }
 
     @Override
     public void debug() {
-        double pos = Range.scale(hood.getPosition(), DOWN_POSITION, UP_POSITION, 0, 1);
-        r.telemetry.addData("Hood - Position", "%1.2f", pos);
+        r.telemetry.addData("Hood - Position", "%1.2f", percentPos);
     }
 }

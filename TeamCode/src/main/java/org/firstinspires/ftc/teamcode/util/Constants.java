@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import com.pedropathing.math.Pose;
 import com.skeletonarmy.marrow.zones.CompositeZone;
 import com.skeletonarmy.marrow.zones.Point;
 import com.skeletonarmy.marrow.zones.PolygonZone;
@@ -57,8 +56,6 @@ public class Constants {
 
     public static final double RIGHT_GOAL_Y = 55;
     public static final double LEFT_GOAL_Y = FIELD_WIDTH - 55;
-    public static final Pose RIGHT_GOAL = new Pose(58, RIGHT_GOAL_Y);
-    public static final Pose LEFT_GOAL = new Pose(58, LEFT_GOAL_Y);
     public static final PolygonZone RIGHT_SCORING_ZONE = new PolygonZone(
             new Point(0, 0),
             new Point(FIELD_WIDTH, 0),
@@ -74,27 +71,13 @@ public class Constants {
 
     // center of the hive's front face
     // adjusted a bit down because there is less valid scoring area in the top triangle than in the bottom rectangle
-    public static final Position RED_RIGHT_HIVE_TARGET = new Position(DistanceUnit.INCH,
+    public static final Position RIGHT_GOAL = new Position(DistanceUnit.INCH,
             58.8976, 55.1654, 58.3307, 0);
-    public static final Position RED_LEFT_HIVE_TARGET = new Position(DistanceUnit.INCH,
-            RED_RIGHT_HIVE_TARGET.x, HALF_FIELD_WIDTH-RED_RIGHT_HIVE_TARGET.y, RED_RIGHT_HIVE_TARGET.z, 0);
-    public static final Position BLUE_LEFT_HIVE_TARGET = new Position(DistanceUnit.INCH,
-            HALF_FIELD_WIDTH-RED_RIGHT_HIVE_TARGET.x, RED_RIGHT_HIVE_TARGET.y, RED_RIGHT_HIVE_TARGET.z, 0);
-    public static final Position BLUE_RIGHT_HIVE_TARGET = new Position(DistanceUnit.INCH,
-            HALF_FIELD_WIDTH-RED_RIGHT_HIVE_TARGET.x, HALF_FIELD_WIDTH-RED_RIGHT_HIVE_TARGET.y, RED_RIGHT_HIVE_TARGET.z, 0);
-
+    public static final Position LEFT_GOAL = new Position(DistanceUnit.INCH,
+            RIGHT_GOAL.x, HALF_FIELD_WIDTH-RIGHT_GOAL.y, RIGHT_GOAL.z, 0);
 
     // TODO: NEED HEAVY TUNING
     public static final double SHOOT_TIME = 1000;
     public static final double FLOWER_INTAKE_TIME = 2000;
     public static final double GARDEN_INTAKE_TIME = 800;
-
-    // Limelight / HiveVision Camera Calibration Constants
-    public static final double LIMELIGHT_X_OFFSET = 6.0;   // inches forward from robot center
-    public static final double LIMELIGHT_Y_OFFSET = 0.0;   // inches left from robot center
-    public static final double LIMELIGHT_Z_OFFSET = 10.0;  // inches above ground to camera lens
-    public static final double LIMELIGHT_PITCH_DEG = -20.0; // camera pitch angle in degrees (negative = tilted down)
-    public static final double LIMELIGHT_YAW_DEG = 0.0;     // camera yaw offset in degrees relative to robot forward
-
-    public static final double BALL_RADIUS = 1.5;           // ball center height above ground in inches
 }

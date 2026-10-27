@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.FlowerDescorer;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.SOTM;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Transfer;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
@@ -43,6 +44,7 @@ public class Robot {
     public final FlowerDescorer descorer;
     public final Shooter shooter;
     public final Turret turret;
+    public final SOTM sotm;
 
     public Robot(OpMode o) {
         this.o = o;
@@ -56,6 +58,7 @@ public class Robot {
         descorer = new FlowerDescorer(this);
         shooter = new Shooter(this);
         turret = new Turret(this);
+        sotm = new SOTM(this);
 
         allHubs = o.hardwareMap.getAll(LynxModule.class);
         allHubs.forEach((m) -> m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
@@ -72,6 +75,7 @@ public class Robot {
             descorer.periodic();
             shooter.periodic();
             turret.periodic();
+            sotm.periodic();
         }));
 
         loopTimer.reset();
@@ -92,6 +96,7 @@ public class Robot {
         descorer.debug();
         shooter.debug();
         turret.debug();
+        sotm.debug();
 
         telemetry.addData("Misc - Last loop time (ms)", lastLoopTime);
         telemetry.update();

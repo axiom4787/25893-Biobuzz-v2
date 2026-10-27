@@ -19,6 +19,7 @@ public class Shooter extends Subsystem {
     private final VoltageSensor voltageSensor;
 
     private boolean active = true;
+    private double targetVelocity = 0;
 
     private final Controller velocityController = Controller.sum(
             Controller.staticFeedforward(0.01),
@@ -50,18 +51,12 @@ public class Shooter extends Subsystem {
         return getVelocityError() < 150;
     }
 
-    public double getTargetVelocity() {
-        double distToGoal = r.drivetrain.getDistanceToGoal();
-        // TODO: Find target velocity based on distance from goal
-        return 0;
-    }
-
     public double getActualVelocity() {
         return shooter.getVelocity();
     }
 
     public double getVelocityError() {
-        return getTargetVelocity() - getActualVelocity();
+        return targetVelocity - getActualVelocity();
     }
 
     @Override
@@ -69,7 +64,7 @@ public class Shooter extends Subsystem {
         if (!active) {
             shooter.setPower(0);
         } else {
-            double targetVelocity = getTargetVelocity();
+            targetVelocity = r.sotm.getFlywheelTPS();
             double velocityError = getVelocityError();
             double power = velocityController.calculate(targetVelocity, velocityError);
 
@@ -83,7 +78,7 @@ public class Shooter extends Subsystem {
     public void debug() {
         r.telemetry.addLine("Shooter");
         r.telemetry.addData("- Actual Velocity", "%4f", getActualVelocity());
-        r.telemetry.addData("- Target Velocity", "%4f", getTargetVelocity());
+        r.telemetry.addData("- Target Velocity", "%4f", targetVelocity);
         r.telemetry.addData("- Velocity Error", "%4f", getVelocityError());
     }
 }
