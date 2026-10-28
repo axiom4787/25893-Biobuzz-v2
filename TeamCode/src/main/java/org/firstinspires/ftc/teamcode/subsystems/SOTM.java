@@ -37,14 +37,27 @@ public class SOTM extends Subsystem {
 
     public static final double BALL_LAUNCH_HEIGHT = 11.36; // top of turret-ish, inches
     public static final double g = 386.09; // gravity, inches/sec/sec
-    public static final double MAX_HOOD_ANGLE = 65; // degrees
+    public static final double MAX_HOOD_ANGLE = Math.toRadians(65); // radians
     public static final double SYSTEM_LATENCY_SEC = 0; // perfectly optimized mechanisms i hope
+    public static final double TURRET_FORWARD_OFFSET = 0.762; // the cad does not lie
 
     @Override
     public void periodic()
     {
         Pose robotPose = r.drivetrain.getPose();
         Velocity robotVel = r.drivetrain.follower().velocity();
+
+        double heading = robotPose.heading();
+        double omega = robotVel.omega;
+
+        // tangential velocity of the turret due to forward offset and robot rotational velocity
+        double vRotFieldX = -omega * TURRET_FORWARD_OFFSET * Math.sin(heading);
+        double vRotFieldY = omega * TURRET_FORWARD_OFFSET * Math.cos(heading);
+
+        // combined robot velocity + turret tangential velocity = ultimate crandall capabilities
+        double turretVelX = robotVel.vx + vRotFieldX;
+        double turretVelY = robotVel.vy + vRotFieldY;
+
         // account for input/output lag (we will have none because we are Too Good)
         Pose futurePose = robotPose.plus(robotVel.toVector2D().toPose().times(SYSTEM_LATENCY_SEC));
         Position targetPos = r.drivetrain.getGoalPos();
@@ -56,13 +69,12 @@ public class SOTM extends Subsystem {
         // Deming approved Kinematic Equations
         double launchVelZ = Math.sqrt(2*g*dz);
         double timeOfFlight = launchVelZ/g;
-        double launchVelX = dx/timeOfFlight - robotVel.vx;
-        double launchVelY = dy/timeOfFlight - robotVel.vy;
+        double launchVelX = dx/timeOfFlight - turretVelX;
+        double launchVelY = dy/timeOfFlight - turretVelY;
 
         double launchVelXY = Math.hypot(launchVelX, launchVelY); // flat component of velocity
 
-
-        double hoodAngle = Math.toDegrees(Math.atan2(launchVelZ, launchVelXY));
+        double hoodAngle = Math.atan2(launchVelZ, launchVelXY);
 
         // Hood can only aim so high, we may need to compensate with extra velocity at max angle
         if (hoodAngle > MAX_HOOD_ANGLE) {
@@ -72,9 +84,9 @@ public class SOTM extends Subsystem {
 
             timeOfFlight = Math.sqrt(2*(dh*Math.tan(MAX_HOOD_ANGLE)-dz)/g); // works on my machine
 
-            // recalc velocities using new TOF
-            launchVelX = dx/timeOfFlight - robotVel.vx;
-            launchVelY = dy/timeOfFlight - robotVel.vy;
+            // recalc velocities using new TOF + turret velocity
+            launchVelX = dx/timeOfFlight - turretVelX;
+            launchVelY = dy/timeOfFlight - turretVelY;
             launchVelXY = Math.hypot(launchVelX, launchVelY);
             launchVelZ = launchVelXY*Math.tan(MAX_HOOD_ANGLE);
         }
@@ -85,7 +97,7 @@ public class SOTM extends Subsystem {
         double turretAngle = robotPose.heading() - turretAngleFieldRel;
 
         this.flywheelTPS = TPSFromLaunchVel(launchVel3D);
-        this.hoodPosition = hoodAngle/65.0;
+        this.hoodPosition = hoodAngle/MAX_HOOD_ANGLE;
         this.turretAngleRad = turretAngle;
     }
 
