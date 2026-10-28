@@ -6,16 +6,16 @@ import static com.pedropathing.ivy.commands.Commands.*;
 import com.pedropathing.controllers.Controller;
 import com.pedropathing.ivy.Command;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
-import org.firstinspires.ftc.teamcode.util.hardware.DcMotorExCaching;
 
 
 public class Shooter extends Subsystem {
-    private final DcMotorExCaching shooter;
+    private final DcMotorEx shooter;
     private final VoltageSensor voltageSensor;
 
     private boolean active = true;
@@ -32,7 +32,7 @@ public class Shooter extends Subsystem {
     public Shooter(Robot r) {
         super(r);
 
-        shooter = r.hardwareMap.get(DcMotorExCaching.class, "shooter");
+        shooter = r.hardwareMap.get(DcMotorEx.class, "shooter");
         shooter.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

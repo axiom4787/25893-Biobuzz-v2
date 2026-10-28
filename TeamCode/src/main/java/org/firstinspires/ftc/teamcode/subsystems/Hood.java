@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
-import org.firstinspires.ftc.teamcode.util.hardware.ServoCaching;
 
 
 public class Hood extends Subsystem {
-    private final ServoCaching hood;
+    private final Servo hood;
 
     private boolean enabled = true;
 
@@ -20,7 +20,7 @@ public class Hood extends Subsystem {
     public Hood(Robot r) {
         super(r);
 
-        hood = r.hardwareMap.get(ServoCaching.class, "hood");
+        hood = r.hardwareMap.get(Servo.class, "hood");
     }
 
     public boolean isEnabled() {
