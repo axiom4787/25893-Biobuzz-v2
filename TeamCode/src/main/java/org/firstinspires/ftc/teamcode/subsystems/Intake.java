@@ -4,22 +4,22 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static com.pedropathing.ivy.commands.Commands.*;
 
 import com.pedropathing.ivy.Command;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
-import org.firstinspires.ftc.teamcode.util.hardware.DcMotorCaching;
 
 
 public class Intake extends Subsystem {
     private State state = State.IDLE;
 
-    private final DcMotorCaching intake;
+    private final DcMotor intake;
 
     public Intake(Robot r) {
         super(r);
 
-        intake = r.hardwareMap.get(DcMotorCaching.class, "intake");
+        intake = r.hardwareMap.get(DcMotor.class, "intake");
         intake.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
     }
 

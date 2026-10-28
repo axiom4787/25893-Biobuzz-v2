@@ -4,22 +4,22 @@ package org.firstinspires.ftc.teamcode.subsystems;
 import static com.pedropathing.ivy.commands.Commands.instant;
 
 import com.pedropathing.ivy.Command;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
-import org.firstinspires.ftc.teamcode.util.hardware.DcMotorCaching;
 
 
 public class Transfer extends Subsystem {
-    private final DcMotorCaching transfer;
+    private final DcMotor transfer;
 
     private State state = State.IDLE;
 
     public Transfer(Robot r) {
         super(r);
 
-        transfer = r.hardwareMap.get(DcMotorCaching.class, "transfer");
+        transfer = r.hardwareMap.get(DcMotor.class, "transfer");
         transfer.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
     }
 
