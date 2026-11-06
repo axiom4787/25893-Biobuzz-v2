@@ -10,16 +10,18 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 
+import dev.frozenmilk.dairy.cachinghardware.CachingDcMotor;
+
 
 public class Intake extends Subsystem {
     private State state = State.IDLE;
 
-    private final DcMotor intake;
+    private final CachingDcMotor intake;
 
     public Intake(Robot r) {
         super(r);
 
-        intake = r.hardwareMap.get(DcMotor.class, "intake");
+        intake = new CachingDcMotor(r.hardwareMap.get(DcMotor.class, "intake"));
         intake.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
     }
 

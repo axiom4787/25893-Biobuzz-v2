@@ -7,9 +7,11 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 
+import dev.frozenmilk.dairy.cachinghardware.CachingServo;
+
 
 public class Hood extends Subsystem {
-    private final Servo hood;
+    private final CachingServo hood;
 
     private boolean enabled = true;
 
@@ -20,7 +22,7 @@ public class Hood extends Subsystem {
     public Hood(Robot r) {
         super(r);
 
-        hood = r.hardwareMap.get(Servo.class, "hood");
+        hood = new CachingServo(r.hardwareMap.get(Servo.class, "hood"));
     }
 
     public boolean isEnabled() {

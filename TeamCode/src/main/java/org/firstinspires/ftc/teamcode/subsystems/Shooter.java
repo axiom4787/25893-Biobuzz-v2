@@ -13,9 +13,11 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 
+import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx;
+
 
 public class Shooter extends Subsystem {
-    private final DcMotorEx shooter;
+    private final CachingDcMotorEx shooter;
     private final VoltageSensor voltageSensor;
 
     private boolean active = true;
@@ -32,7 +34,7 @@ public class Shooter extends Subsystem {
     public Shooter(Robot r) {
         super(r);
 
-        shooter = r.hardwareMap.get(DcMotorEx.class, "shooter");
+        shooter = new CachingDcMotorEx(r.hardwareMap.get(DcMotorEx.class, "shooter"));
         shooter.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

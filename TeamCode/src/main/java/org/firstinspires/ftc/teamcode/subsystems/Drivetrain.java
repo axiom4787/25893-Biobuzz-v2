@@ -76,7 +76,7 @@ public class Drivetrain extends Subsystem {
                 "X=%3.2f, Y=%3.2f, H=%5.2f°",
                 getPose().x(),
                 getPose().y(),
-                getPose().heading()
+                Math.toDegrees(getPose().heading())
         );
         r.telemetry.addData(
                 "- Velocity",

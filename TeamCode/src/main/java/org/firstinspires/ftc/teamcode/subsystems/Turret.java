@@ -14,9 +14,11 @@ import com.qualcomm.robotcore.util.Range;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 
+import dev.frozenmilk.dairy.cachinghardware.CachingDcMotor;
+
 
 public class Turret extends Subsystem {
-    private final DcMotor turret;
+    private final CachingDcMotor turret;
 
     private double clippedTargetAngleRadians = 0;
     private boolean canAchieveTarget = true;
@@ -41,7 +43,7 @@ public class Turret extends Subsystem {
     public Turret(Robot r) {
         super(r);
 
-        turret = r.hardwareMap.get(DcMotor.class, "turret");
+        turret = new CachingDcMotor(r.hardwareMap.get(DcMotor.class, "turret"));
         turret.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         zero();

@@ -9,18 +9,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 
+import dev.frozenmilk.dairy.cachinghardware.CachingServo;
+
 
 public class FlowerDescorer extends Subsystem {
-    private final Servo left, right;
+    private final CachingServo left, right;
 
-    private static final double STOWED_POSITION = 0.5;
-    private static final double DEPLOYED_POSITION = 0.0;
+    private static final double STOWED_POSITION = 0.0;
+    private static final double DEPLOYED_POSITION = 0.5;
 
     public FlowerDescorer(Robot r) {
         super(r);
 
-        left = r.hardwareMap.get(Servo.class, "flowerLeft");
-        right = r.hardwareMap.get(Servo.class, "flowerRight");
+        left = new CachingServo(r.hardwareMap.get(Servo.class, "leftFlower"));
+        right = new CachingServo(r.hardwareMap.get(Servo.class, "rightFlower"));
         right.setDirection(Servo.Direction.REVERSE);
     }
 

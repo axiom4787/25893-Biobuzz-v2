@@ -90,6 +90,7 @@ public class Robot {
     }
 
     public void debug() {
+        drivetrain.debug();
         intake.debug();
         transfer.debug();
         blocker.debug();
@@ -123,8 +124,7 @@ public class Robot {
         ).requiring(shooter, transfer);
     }
 
-    /// @param isDone Whether to stop attempting to collect pollen from the ground (ex: () -> gamepad1.aWasReleased())
-    public Command collectGround(BooleanSupplier isDone) {
+    public Command collectGround() {
         return new CommandBuilder()
                 .setStart(() -> Scheduler.schedule(
                         intake.in(),
@@ -134,12 +134,10 @@ public class Robot {
                         intake.idle(),
                         transfer.idle()
                 ))
-                .setDone(isDone)
                 .requiring(intake, transfer);
     }
 
-    /// @param isDone Whether to stop attempting to collect pollen from a flower (ex: () -> gamepad1.aWasReleased())
-    public Command collectFlower(BooleanSupplier isDone) {
+    public Command collectFlower() {
         return new CommandBuilder()
                 .setStart(() -> Scheduler.schedule(
                         intake.in(),
@@ -151,7 +149,6 @@ public class Robot {
                         transfer.idle(),
                         descorer.stow()
                 ))
-                .setDone(isDone)
                 .requiring(intake, transfer, descorer);
     }
 

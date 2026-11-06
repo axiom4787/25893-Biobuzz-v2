@@ -33,7 +33,7 @@ public class Auto1 extends LinearOpMode {
                                 robot.follow(Paths.START_TO_GARDEN),
                                 waitMs(Constants.GARDEN_INTAKE_TIME)
                         ),
-                        robot.collectGround(() -> false)
+                        robot.collectGround()
                 ),
 
                 robot.follow(Paths.GARDEN_TO_LEFT_HIVE_SCORE),
@@ -44,7 +44,7 @@ public class Auto1 extends LinearOpMode {
                                 robot.follow(Paths.LEFT_HIVE_SCORE_TO_ALLIANCE_FLOWER),
                                 waitMs(Constants.FLOWER_INTAKE_TIME)
                         ),
-                        robot.collectFlower(() -> false)
+                        robot.collectFlower()
                 ),
 
                 robot.follow(Paths.ALLIANCE_FLOWER_TO_LEFT_HIVE_SCORE),

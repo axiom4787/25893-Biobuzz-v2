@@ -37,7 +37,7 @@ public class ColinAuto extends LinearOpMode {
                 robot.follow(Paths.farFlowerToAllianceFLower()), // Go to alliance flower
 
                 race( // Intake from alliance flower (descorer is already down)
-                        robot.collectGround(() -> false),
+                        robot.collectGround(),
                         waitMs(Constants.FLOWER_INTAKE_TIME)
                 ),
 
@@ -48,7 +48,7 @@ public class ColinAuto extends LinearOpMode {
                 robot.shootAll(), // Shoot alliance flower balls into hive
 
                 race(
-                        robot.collectGround(() -> false),
+                        robot.collectGround(),
                         robot.follow(Paths.leftHiveToGarden())
                 ),
 

@@ -9,9 +9,11 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 
+import dev.frozenmilk.dairy.cachinghardware.CachingServo;
+
 
 public class Blocker extends Subsystem {
-    private final Servo blocker;
+    private final CachingServo blocker;
 
     private static final double BLOCKING_POSITION = 0.2; // Placeholder
     private static final double UNBLOCKING_POSITION = 0.8; // Placeholder
@@ -19,7 +21,7 @@ public class Blocker extends Subsystem {
     public Blocker(Robot r) {
         super(r);
 
-        blocker = r.hardwareMap.get(Servo.class, "flowerDescorer");
+        blocker = new CachingServo(r.hardwareMap.get(Servo.class, "blocker"));
         blocker.setPosition(UNBLOCKING_POSITION);
     }
 
