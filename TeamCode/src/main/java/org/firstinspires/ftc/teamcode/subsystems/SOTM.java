@@ -22,7 +22,7 @@ public class SOTM extends Subsystem {
     public static final double FLYWHEEL_RADIUS = 1.89; // inches
     // comes from compression, uneven surface of pollen (holes) and being a single-flywheel system
     public static final double EFFICIENCY_FACTOR = 0.42;
-    public static final double RADS_TO_TPS = 28.0 / 2.0 * Math.PI;
+    public static final double RADS_TO_TPS = 112.0 / (2.0 * Math.PI);
 
     /**
      * @param velInS desired launch velocity, inches/sec
@@ -38,6 +38,7 @@ public class SOTM extends Subsystem {
     public static final double BALL_LAUNCH_HEIGHT = 11.36; // top of turret-ish, inches
     public static final double g = 386.09; // gravity, inches/sec/sec
     public static final double MAX_HOOD_ANGLE = Math.toRadians(65); // radians
+    public static final double MIN_HOOD_ANGLE = Math.toRadians(17.5); // radians
     public static final double SYSTEM_LATENCY_SEC = 0; // perfectly optimized mechanisms i hope
     public static final double TURRET_FORWARD_OFFSET = 0.762; // the cad does not lie
 
@@ -76,7 +77,7 @@ public class SOTM extends Subsystem {
 
         double hoodAngle = Math.atan2(launchVelZ, launchVelXY);
 
-        // Hood can only aim so high, we may need to compensate with extra velocity at max angle
+        // Hood can only aim so high/low, we may need to compensate with extra velocity at max/min angle
         if (hoodAngle > MAX_HOOD_ANGLE) {
             hoodAngle = MAX_HOOD_ANGLE;
 
@@ -89,16 +90,27 @@ public class SOTM extends Subsystem {
             launchVelY = dy/timeOfFlight - turretVelY;
             launchVelXY = Math.hypot(launchVelX, launchVelY);
             launchVelZ = launchVelXY*Math.tan(MAX_HOOD_ANGLE);
+        } else if (hoodAngle < MIN_HOOD_ANGLE) {
+            hoodAngle = MIN_HOOD_ANGLE;
+
+            double dh = Math.hypot(dx, dy); // horizontal dist again
+
+            timeOfFlight = Math.sqrt(2*(dh*Math.tan(MIN_HOOD_ANGLE)-dz)/g); // ig bro
+
+            // recalc velocities
+            launchVelX = dx/timeOfFlight - turretVelX;
+            launchVelY = dy/timeOfFlight - turretVelY;
+            launchVelXY = Math.hypot(launchVelX, launchVelY);
+            launchVelZ = launchVelXY*Math.tan(MIN_HOOD_ANGLE);
         }
 
         double launchVel3D = Math.hypot(launchVelXY, launchVelZ);
 
         double turretAngleFieldRel = Math.atan2(launchVelY, launchVelX);
-        double turretAngle = robotPose.heading() - turretAngleFieldRel;
 
         this.flywheelTPS = TPSFromLaunchVel(launchVel3D);
-        this.hoodPosition = hoodAngle/MAX_HOOD_ANGLE;
-        this.turretAngleRad = turretAngle;
+        this.hoodPosition = (MAX_HOOD_ANGLE - hoodAngle) / (MAX_HOOD_ANGLE - MIN_HOOD_ANGLE); // map 65 deg to 0, 17.5 deg to 1
+        this.turretAngleRad = turretAngleFieldRel - robotPose.heading();
     }
 
     public double getFlywheelTPS() {
