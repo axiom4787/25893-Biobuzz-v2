@@ -74,7 +74,7 @@ public class Constants {
     public static final Position RIGHT_GOAL = new Position(DistanceUnit.INCH,
             58.8976, 55.1654, 58.3307, 0);
     public static final Position LEFT_GOAL = new Position(DistanceUnit.INCH,
-            RIGHT_GOAL.x, HALF_FIELD_WIDTH-RIGHT_GOAL.y, RIGHT_GOAL.z, 0);
+            RIGHT_GOAL.x, FIELD_WIDTH-RIGHT_GOAL.y, RIGHT_GOAL.z, 0);
 
     // TODO: NEED HEAVY TUNING
     public static final double SHOOT_TIME = 1000;
