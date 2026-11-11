@@ -38,7 +38,7 @@ public class Teleop extends LinearOpMode {
             // Collecting game elements from the ground: left trigger
             if (gamepad1.leftTriggerWasPressed()) {
                 robot.collectGround()
-                        .until(() -> gamepad1.leftBumperWasPressed())
+                        .until(() -> gamepad1.leftTriggerWasPressed())
                         .schedule();
             }
 
@@ -52,7 +52,7 @@ public class Teleop extends LinearOpMode {
             // Shoot stored game elements
             if (gamepad1.rightTriggerWasPressed()) {
                 if (robot.drivetrain.isInScoringZone()
-                        && Math.abs(robot.turret.getErrorDegrees()) < 12
+//                        && Math.abs(robot.turret.getErrorDegrees()) < 12
                         && robot.shooter.isReady()
                 ) {
                     robot.shootAll().schedule();

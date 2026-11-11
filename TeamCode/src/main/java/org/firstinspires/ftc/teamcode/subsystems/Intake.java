@@ -22,7 +22,7 @@ public class Intake extends Subsystem {
         super(r);
 
         intake = new CachingDcMotor(r.hardwareMap.get(DcMotor.class, "intake"));
-        intake.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     private enum State {

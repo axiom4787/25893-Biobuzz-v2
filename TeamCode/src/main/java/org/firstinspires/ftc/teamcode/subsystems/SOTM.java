@@ -21,8 +21,8 @@ public class SOTM extends Subsystem {
 
     public static final double FLYWHEEL_RADIUS = 1.89; // inches
     // comes from compression, uneven surface of pollen (holes) and being a single-flywheel system
-    public static final double EFFICIENCY_FACTOR = 0.42;
-    public static final double RADS_TO_TPS = 112.0 / (2.0 * Math.PI);
+    public static final double EFFICIENCY_FACTOR = 1.0; // TODO: Tune
+    public static final double RADS_TO_TPS = 28.0 / (2.0 * Math.PI);
 
     /**
      * @param velInS desired launch velocity, inches/sec
@@ -105,6 +105,8 @@ public class SOTM extends Subsystem {
         }
 
         double launchVel3D = Math.hypot(launchVelXY, launchVelZ);
+
+        r.telemetry.addData("Shooter Commanded Vel", launchVel3D);
 
         double turretAngleFieldRel = Math.atan2(launchVelY, launchVelX);
 
