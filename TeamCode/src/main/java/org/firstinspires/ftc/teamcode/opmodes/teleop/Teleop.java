@@ -45,7 +45,7 @@ public class Teleop extends LinearOpMode {
             // Collecting game elements from flowers: left bumper
             if (gamepad1.leftBumperWasPressed()) {
                 robot.collectFlower()
-                        .until(() -> gamepad1.leftBumperWasPressed())
+                        .until(() -> gamepad1.leftBumperWasReleased())
                         .schedule();
             }
 

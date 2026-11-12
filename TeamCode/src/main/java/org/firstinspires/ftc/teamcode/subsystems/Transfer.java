@@ -22,7 +22,7 @@ public class Transfer extends Subsystem {
         super(r);
 
         transfer = new CachingDcMotor(r.hardwareMap.get(DcMotor.class, "transfer"));
-        transfer.setDirection(DcMotorSimple.Direction.REVERSE); // TODO: Verify direction
+        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     private enum State {

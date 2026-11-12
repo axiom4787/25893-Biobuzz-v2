@@ -15,8 +15,8 @@ public class Hood extends Subsystem {
 
     private boolean enabled = true;
 
-    private static final double UP_POSITION = 0.8; // Placeholder
-    private static final double DOWN_POSITION = 0.2; // Placeholder
+    private static final double UP_POSITION = 1;
+    private static final double DOWN_POSITION = 0.27;
     private double percentPos = 0; // scaled, down pos = 0.0, up pos = 1.0
 
     public Hood(Robot r) {

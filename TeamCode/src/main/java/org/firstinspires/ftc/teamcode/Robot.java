@@ -73,8 +73,8 @@ public class Robot {
             transfer.periodic();
             blocker.periodic();
             descorer.periodic();
-            shooter.periodic();
-            turret.periodic();
+//            shooter.periodic();
+//            turret.periodic();
             sotm.periodic();
         }));
 
@@ -95,8 +95,8 @@ public class Robot {
         transfer.debug();
         blocker.debug();
         descorer.debug();
-        shooter.debug();
-        turret.debug();
+//        shooter.debug();
+//        turret.debug();
         sotm.debug();
 
         telemetry.addData("Misc - Last loop time (ms)", lastLoopTime);
@@ -124,9 +124,11 @@ public class Robot {
         ).requiring(shooter, transfer);
     }
 
+    /// Lower the flower descorer and run the intake until the command is interrupted
     public Command collectGround() {
         return new CommandBuilder()
                 .setStart(() -> Scheduler.schedule(
+                        blocker.block(),
                         intake.in(),
                         transfer.in()
                 ))
@@ -134,12 +136,14 @@ public class Robot {
                         intake.idle(),
                         transfer.idle()
                 ))
-                .requiring(intake, transfer);
+                .requiring(intake, transfer, blocker);
     }
 
+    /// Run the intake until the command is interrupted
     public Command collectFlower() {
         return new CommandBuilder()
                 .setStart(() -> Scheduler.schedule(
+                        blocker.block(),
                         intake.in(),
                         transfer.in(),
                         descorer.deploy()
@@ -149,7 +153,7 @@ public class Robot {
                         transfer.idle(),
                         descorer.stow()
                 ))
-                .requiring(intake, transfer, descorer);
+                .requiring(intake, transfer, descorer, blocker);
     }
 
     /// Disable the robot
