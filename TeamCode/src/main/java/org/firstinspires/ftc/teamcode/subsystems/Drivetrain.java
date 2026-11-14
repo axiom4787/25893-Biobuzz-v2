@@ -85,6 +85,7 @@ public class Drivetrain extends Subsystem {
                 follower.velocity().vy,
                 follower.velocity().omega
         );
+        r.telemetry.addData("- Distance to goal", r.drivetrain.getDistanceToGoal());
         r.telemetry.addData("- Follower state", follower.mode().name());
     }
 }

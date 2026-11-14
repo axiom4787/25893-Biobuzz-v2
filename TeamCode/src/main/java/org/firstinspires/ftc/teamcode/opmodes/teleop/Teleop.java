@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.opmodes.teleop;
 
 
 import com.pedropathing.follower.ManualDrive;
-import com.pedropathing.ivy.Command;
-import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -20,6 +18,9 @@ public class Teleop extends LinearOpMode {
         waitForStart();
 
         robot.start();
+        robot.usePreviousOpModePose();
+        robot.turret.enable().schedule();
+//        robot.drivetrain.setPose();
 
         while (opModeIsActive()) {
             // Update subsystems and log to driver station
@@ -57,14 +58,18 @@ public class Teleop extends LinearOpMode {
             }
 
             // Shoot stored game elements: right trigger
-            if (gamepad1.right_trigger >= 0.2 && Math.abs(robot.turret.getErrorDegrees()) < 10) {
+            if (gamepad1.right_trigger >= 0.2) { //  && Math.abs(robot.turret.getErrorDegrees()) < 10
                 robot.shoot()
                         .until(() -> gamepad1.right_trigger < 0.2)
                         .schedule();
             }
 
             if (gamepad1.a) {
-                robot.drivetrain.setPose(new Pose(8,141.5-8,0));
+                robot.drivetrain.setPose(Robot.RELOCALIZATION_PARK_CORNER);
+            }
+
+            if (gamepad1.y) {
+                robot.turret.zero_().schedule();
             }
         }
     }

@@ -26,7 +26,7 @@ public class TuneTurret extends LinearOpMode {
 
     static {
         double TICKS_PER_MOTOR_ROTATION = 537.7; // 537.7 ticks per full drive motor rotation (312 RPM motor).
-        double GEAR_RATIO = 1.0 / 3.0; // Placeholder, Input gear teeth / output gear teeth
+        double GEAR_RATIO = 26.0 / 60.0; // Placeholder, Input gear teeth / output gear teeth
 
         MOTOR_TICKS_PER_TURRET_ROTATION = TICKS_PER_MOTOR_ROTATION / GEAR_RATIO;
         // A target angle of zero should be facing straight backwards
@@ -56,9 +56,9 @@ public class TuneTurret extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad1.a) {
-                clippedTargetAngleRadians = Math.toRadians(-45);
+                clippedTargetAngleRadians = Math.toRadians(-90);
             } else if (gamepad1.b) {
-                clippedTargetAngleRadians = Math.toRadians(45);
+                clippedTargetAngleRadians = Math.toRadians(90);
             } else if (gamepad1.x) {
                 clippedTargetAngleRadians = 0;
             }

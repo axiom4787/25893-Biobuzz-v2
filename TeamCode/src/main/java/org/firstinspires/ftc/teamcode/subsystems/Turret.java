@@ -26,9 +26,15 @@ public class Turret extends Subsystem {
     private double unclippedTargetAngleRadians = 0;
     private boolean canAchieveTarget = true;
 
-    private boolean enabled = true;
+    private State state = State.ZERO;
+
+    private enum State {
+        DISABLED,
+        AUTO_AIM,
+        ZERO,
+    }
     private final Controller turnController =
-            Controller.pid(0.3, 0, 0)
+            Controller.pid(0.45, 0, 0)
                     .plus(Controller.staticFeedforward(0.05));
 
     private static final double CCW_LIMIT_RAD = Math.toRadians(90);
@@ -49,7 +55,7 @@ public class Turret extends Subsystem {
         super(r);
 
         turret = new CachingDcMotor(r.hardwareMap.get(DcMotor.class, "turret"));
-        turret.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
+        turret.setDirection(DcMotorSimple.Direction.FORWARD);
         turret.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         zero();
     }
@@ -64,19 +70,21 @@ public class Turret extends Subsystem {
     }
 
     public boolean canAchieveUnclippedTarget() {
-        return true;
+        return canAchieveTarget;
     }
 
     public Command enable() {
-        return instant(() -> enabled = true);
+        return instant(() -> state = State.AUTO_AIM);
     }
 
     public Command disable() {
-        return instant(() -> enabled = false);
+        return instant(() -> state = State.DISABLED);
     }
 
+    public Command zero_() { return instant(() -> state = State.ZERO); }
+
     public boolean isEnabled() {
-        return enabled;
+        return state == State.AUTO_AIM;
     }
 
     public double getActualAngleRadians() {
@@ -101,7 +109,7 @@ public class Turret extends Subsystem {
         double robotY = robotPose.y();
 
         // Get turret in field space using the robot's pose and how far behind the center of the robot the turret is
-        double turretOffset = 0.762; // 3 inches behind center of robot
+        double turretOffset = 0.762;
         double turretX = robotX - turretOffset * Math.cos(robotHeading);
         double turretY = robotY - turretOffset * Math.sin(robotHeading);
 
@@ -110,7 +118,12 @@ public class Turret extends Subsystem {
         double diffX = turretX - goalPose.x;
         double diffY = turretY - goalPose.y;
         double headingTowardsGoal = Math.atan2(diffY, diffX);
-        unclippedTargetAngleRadians = Angle.normalizeSigned(headingTowardsGoal - robotHeading);
+
+        if (state == State.ZERO) {
+            unclippedTargetAngleRadians = 0;
+        } else {
+            unclippedTargetAngleRadians = Angle.normalizeSigned(headingTowardsGoal - robotHeading);
+        }
 
         // Clip target to the maximum range of the turret
 //        unclippedTargetAngleRadians = Angle.normalizeSigned(r.sotm.getTurretAngleRad());
@@ -119,7 +132,7 @@ public class Turret extends Subsystem {
         clippedTargetAngleRadians = clipped;
         double power = turnController.calculate(getClippedTargetAngleRadians(), getErrorRadians());
 
-        if (enabled && Math.abs(power) > 0.05) {
+        if (state != State.DISABLED) {
             turret.setPower(power);
         } else {
             turret.setPower(0);
@@ -136,6 +149,6 @@ public class Turret extends Subsystem {
         r.telemetry.addData("- Angle", "Actual=%3.2f°, Target=%3.2f°, Error=%3.2f°", actualAngleDeg, targetAngleDeg, angleErrorDeg);
         r.telemetry.addData("- Turret power", turret.getPower());
         r.telemetry.addData("- Unclipped", Math.toDegrees(unclippedTargetAngleRadians));
-        r.telemetry.addData("- Is enabled", enabled ? "Yes" : "No");
+        r.telemetry.addData("- Is enabled", isEnabled() ? "Yes" : "No");
     }
 }

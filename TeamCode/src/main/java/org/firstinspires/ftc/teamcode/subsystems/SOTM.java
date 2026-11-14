@@ -111,7 +111,7 @@ public class SOTM extends Subsystem {
 
         double turretAngleFieldRel = Math.atan2(launchVelY, launchVelX);
 
-        r.telemetry.addData("turret angle field rel", turretAngleFieldRel);
+//        r.telemetry.addData("turret angle field rel", turretAngleFieldRel);
 
         this.flywheelTPS = TPSFromLaunchVel(launchVel3D);
         this.hoodPosition = (MAX_HOOD_ANGLE - hoodAngle) / (MAX_HOOD_ANGLE - MIN_HOOD_ANGLE); // map 65 deg to 0, 17.5 deg to 1

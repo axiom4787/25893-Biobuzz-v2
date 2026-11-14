@@ -104,8 +104,6 @@ public class Shooter extends Subsystem {
                 shooter.setPower(power);
             }
         }
-
-        r.telemetry.addData("dist to goal", r.drivetrain.getDistanceToGoal());
     }
 
     @Override

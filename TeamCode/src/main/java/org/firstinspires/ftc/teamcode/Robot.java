@@ -11,6 +11,7 @@ import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.ivy.behaviors.ConflictBehavior;
 import com.pedropathing.ivy.pedro.PedroCommands;
+import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -36,6 +37,9 @@ import java.util.function.BooleanSupplier;
 
 
 public class Robot {
+    public static final Pose RELOCALIZATION_PARK_CORNER = new Pose(8,141.5-8,0);
+    public static Pose poseStorage = RELOCALIZATION_PARK_CORNER;
+
     public final OpMode o;
     public final HardwareMap hardwareMap;
     public final Telemetry telemetry;
@@ -90,7 +94,7 @@ public class Robot {
             turret.periodic();
             hood.periodic();
             sotm.periodic();
-            lights.periodic();
+//            lights.periodic();
         }));
 
         loopTimer.reset();
@@ -102,6 +106,10 @@ public class Robot {
         loopTimer.reset();
 
         Scheduler.execute();
+
+        if (drivetrain.getPose() != Pose.zero()) {
+            poseStorage = drivetrain.getPose();
+        }
     }
 
     public void debug() {
@@ -118,6 +126,10 @@ public class Robot {
 
         telemetry.addData("Misc - Last loop time (ms)", lastLoopTime);
         telemetry.update();
+    }
+
+    public void usePreviousOpModePose() {
+        drivetrain.setPose(poseStorage);
     }
 
     /// Shoot all possessed game elements (for Constants.SHOOT_TIME)

@@ -38,8 +38,15 @@ public class Lights extends Subsystem {
     }
 
     private static final PrismAnimations.Solid RED_BACKGROUND = new PrismAnimations.Solid(Color.RED);
+    private static final PrismAnimations.Blink PURPLE_BLINK = new PrismAnimations.Blink(Color.PURPLE, Color.TRANSPARENT);
+    private static final PrismAnimations.Solid SOLID_YELLOW = new PrismAnimations.Solid(Color.YELLOW);
+    private static final PrismAnimations.Rainbow RAINBOW = new PrismAnimations.Rainbow();
+
     static {
-        RED_BACKGROUND.setBrightness(50);
+        RED_BACKGROUND.setIndexes(0, 23);
+        PURPLE_BLINK.setIndexes(0, 23);
+        SOLID_YELLOW.setIndexes(0, 23);
+        RAINBOW.setIndexes(0, 23);
     }
 
 
@@ -52,7 +59,7 @@ public class Lights extends Subsystem {
         state = State.AIM_BAR_EMPTY;
     }
 
-    private PrismAnimations.Solid greenBar(int width) {
+    private PrismAnimations.Solid greenBar(int width, int offset) {
         PrismAnimations.Solid greenBar = new PrismAnimations.Solid(Color.GREEN);
 
         int startIndex = (12 - width) / 2;
@@ -94,30 +101,21 @@ public class Lights extends Subsystem {
         if (state == lastState) return;
 
         lights.clearAllAnimations();
-        r.telemetry.addLine("lights updating");
 
         if (state.aimBarWidth != State.NO_BAR_SENTINEL) {
-            lights.insertAnimation(LayerHeight.LAYER_0, RED_BACKGROUND);
-            lights.insertAnimation(LayerHeight.LAYER_1, greenBar(state.aimBarWidth));
+            lights.insertAndUpdateAnimation(LayerHeight.LAYER_0, RED_BACKGROUND);
+
+            if (state.aimBarWidth > 0) {
+                lights.insertAndUpdateAnimation(LayerHeight.LAYER_1, greenBar(state.aimBarWidth, 0));
+                lights.insertAndUpdateAnimation(LayerHeight.LAYER_1, greenBar(state.aimBarWidth, 12));
+            }
         } else if (state == State.OUTSIDE_TURRET_RANGE) {
-            PrismAnimations.Blink purpleBlink = new PrismAnimations.Blink(Color.PURPLE);
-            purpleBlink.setBrightness(50);
-
-            lights.insertAnimation(LayerHeight.LAYER_0, purpleBlink);
+            lights.insertAndUpdateAnimation(LayerHeight.LAYER_0, PURPLE_BLINK);
         } else if (state == State.OUTSIDE_LAUNCH_ZONE) {
-            PrismAnimations.Solid solidYellow = new PrismAnimations.Solid(Color.YELLOW);
-            solidYellow.setBrightness(50);
-
-            lights.insertAnimation(LayerHeight.LAYER_0, solidYellow);
+            lights.insertAndUpdateAnimation(LayerHeight.LAYER_0, SOLID_YELLOW);
         } else if (state == State.SHOOTING) {
-            PrismAnimations.Rainbow rainbow = new PrismAnimations.Rainbow();
-            rainbow.setBrightness(50);
-            lights.insertAnimation(LayerHeight.LAYER_0, rainbow);
-        } else {
-            r.telemetry.addLine("bad lights state");
+            lights.insertAndUpdateAnimation(LayerHeight.LAYER_0, RAINBOW);
         }
-
-        lights.updateAllAnimations();
     }
 
     @Override
