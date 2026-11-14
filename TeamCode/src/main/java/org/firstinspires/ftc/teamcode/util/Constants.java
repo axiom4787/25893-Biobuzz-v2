@@ -77,7 +77,7 @@ public class Constants {
             RIGHT_GOAL.x, FIELD_WIDTH-RIGHT_GOAL.y, RIGHT_GOAL.z, 0);
 
     // TODO: NEED HEAVY TUNING
-    public static final double SHOOT_TIME = 1000;
-    public static final double FLOWER_INTAKE_TIME = 2000;
-    public static final double GARDEN_INTAKE_TIME = 800;
+    public static final double SHOOT_TIME = 3000;
+    public static final double FLOWER_INTAKE_TIME = 3000;
+    public static final double GARDEN_INTAKE_TIME = 2000;
 }

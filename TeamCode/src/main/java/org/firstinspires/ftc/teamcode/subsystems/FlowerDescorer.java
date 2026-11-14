@@ -15,7 +15,7 @@ import dev.frozenmilk.dairy.cachinghardware.CachingServo;
 public class FlowerDescorer extends Subsystem {
     private final CachingServo left, right;
 
-    private static final double STOWED_POSITION = 0.0;
+    private static final double STOWED_POSITION = 0.05;
     private static final double DEPLOYED_POSITION = 0.5;
 
     public FlowerDescorer(Robot r) {
@@ -24,6 +24,8 @@ public class FlowerDescorer extends Subsystem {
         left = new CachingServo(r.hardwareMap.get(Servo.class, "leftFlower"));
         right = new CachingServo(r.hardwareMap.get(Servo.class, "rightFlower"));
         right.setDirection(Servo.Direction.REVERSE);
+
+        stow().schedule();
     }
 
     public Command stow() {

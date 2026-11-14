@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import static com.pedropathing.ivy.commands.Commands.instant;
 
+import com.pedropathing.controllers.Controller;
 import com.pedropathing.controllers.PIDController;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.math.Pose;
@@ -11,6 +12,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.Range;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Subsystem;
 
@@ -21,18 +23,21 @@ public class Turret extends Subsystem {
     private final CachingDcMotor turret;
 
     private double clippedTargetAngleRadians = 0;
+    private double unclippedTargetAngleRadians = 0;
     private boolean canAchieveTarget = true;
 
     private boolean enabled = true;
-    private final PIDController turnController = new PIDController(0.01, 0, 0);
+    private final Controller turnController =
+            Controller.pid(0.3, 0, 0)
+                    .plus(Controller.staticFeedforward(0.05));
 
-    private static final double CCW_LIMIT_RAD = Math.toRadians(100);
-    private static final double CW_LIMIT_RAD = Math.toRadians(-100);
+    private static final double CCW_LIMIT_RAD = Math.toRadians(90);
+    private static final double CW_LIMIT_RAD = Math.toRadians(-145);
     private static final double MOTOR_TICKS_PER_TURRET_ROTATION;
 
     static {
         double TICKS_PER_MOTOR_ROTATION = 537.7; // 537.7 ticks per full drive motor rotation (312 RPM motor).
-        double GEAR_RATIO = 1.0 / 3.0; // Placeholder, Input gear teeth / output gear teeth
+        double GEAR_RATIO = 26.0 / 60.0; // Input gear teeth / output gear teeth
 
         MOTOR_TICKS_PER_TURRET_ROTATION = TICKS_PER_MOTOR_ROTATION / GEAR_RATIO;
         // A target angle of zero should be facing straight backwards
@@ -90,32 +95,31 @@ public class Turret extends Subsystem {
 
     @Override
     public void periodic() {
-//        Pose robotPose = r.drivetrain.getPose();
-//        double robotHeading = robotPose.heading();
-//        double robotX = robotPose.x();
-//        double robotY = robotPose.y();
-//
-//        // Get turret in field space using the robot's pose and how far behind the center of the robot the turret is
-//        double turretOffset = 3.0; // 3 inches behind center of robot
-//        double turretX = robotX - turretOffset * Math.cos(robotHeading);
-//        double turretY = robotY - turretOffset * Math.sin(robotHeading);
-//
-//        // Get the heading towards the goal using trig
-//        Pose goalPose = r.drivetrain.getGoalPos();
-//        double diffX = goalPose.x() - turretX;
-//        double diffY = goalPose.y() - turretY;
-//        double headingTowardsGoal = Math.atan2(diffY, diffX);
+        Pose robotPose = r.drivetrain.getPose();
+        double robotHeading = robotPose.heading();
+        double robotX = robotPose.x();
+        double robotY = robotPose.y();
+
+        // Get turret in field space using the robot's pose and how far behind the center of the robot the turret is
+        double turretOffset = 0.762; // 3 inches behind center of robot
+        double turretX = robotX - turretOffset * Math.cos(robotHeading);
+        double turretY = robotY - turretOffset * Math.sin(robotHeading);
+
+        // Get the heading towards the goal using trig
+        Position goalPose = r.drivetrain.getGoalPos();
+        double diffX = turretX - goalPose.x;
+        double diffY = turretY - goalPose.y;
+        double headingTowardsGoal = Math.atan2(diffY, diffX);
+        unclippedTargetAngleRadians = Angle.normalizeSigned(headingTowardsGoal - robotHeading);
 
         // Clip target to the maximum range of the turret
-        double unclippedTargetAngleRadians = r.sotm.getTurretAngleRad();
+//        unclippedTargetAngleRadians = Angle.normalizeSigned(r.sotm.getTurretAngleRad());
         double clipped = Range.clip(unclippedTargetAngleRadians, CW_LIMIT_RAD, CCW_LIMIT_RAD);
         canAchieveTarget = unclippedTargetAngleRadians == clipped;
         clippedTargetAngleRadians = clipped;
         double power = turnController.calculate(getClippedTargetAngleRadians(), getErrorRadians());
 
-        if (Math.abs(power) < 0.01) power = 0;
-
-        if (enabled) {
+        if (enabled && Math.abs(power) > 0.05) {
             turret.setPower(power);
         } else {
             turret.setPower(0);
@@ -131,6 +135,7 @@ public class Turret extends Subsystem {
         r.telemetry.addLine("Turret:");
         r.telemetry.addData("- Angle", "Actual=%3.2f°, Target=%3.2f°, Error=%3.2f°", actualAngleDeg, targetAngleDeg, angleErrorDeg);
         r.telemetry.addData("- Turret power", turret.getPower());
+        r.telemetry.addData("- Unclipped", Math.toDegrees(unclippedTargetAngleRadians));
         r.telemetry.addData("- Is enabled", enabled ? "Yes" : "No");
     }
 }

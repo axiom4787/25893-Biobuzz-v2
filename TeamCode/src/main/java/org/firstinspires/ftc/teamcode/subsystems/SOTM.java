@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.pedropathing.math.Pose;
 import com.pedropathing.math.Velocity;
+import com.pedropathing.utils.Angle;
 
 import org.firstinspires.ftc.robotcore.external.navigation.Position;
 import org.firstinspires.ftc.teamcode.Robot;
@@ -39,8 +40,10 @@ public class SOTM extends Subsystem {
     public static final double g = 386.09; // gravity, inches/sec/sec
     public static final double MAX_HOOD_ANGLE = Math.toRadians(65); // radians
     public static final double MIN_HOOD_ANGLE = Math.toRadians(17.5); // radians
-    public static final double SYSTEM_LATENCY_SEC = 0; // perfectly optimized mechanisms i hope
+    public static final double SYSTEM_LATENCY_SEC = 0.015; // loop times
     public static final double TURRET_FORWARD_OFFSET = 0.762; // the cad does not lie
+
+    private double launchVel3D = 0;
 
     @Override
     public void periodic()
@@ -104,15 +107,20 @@ public class SOTM extends Subsystem {
             launchVelZ = launchVelXY*Math.tan(MIN_HOOD_ANGLE);
         }
 
-        double launchVel3D = Math.hypot(launchVelXY, launchVelZ);
-
-        r.telemetry.addData("Shooter Commanded Vel", launchVel3D);
+        this.launchVel3D = Math.hypot(launchVelXY, launchVelZ);
 
         double turretAngleFieldRel = Math.atan2(launchVelY, launchVelX);
 
+        r.telemetry.addData("turret angle field rel", turretAngleFieldRel);
+
         this.flywheelTPS = TPSFromLaunchVel(launchVel3D);
         this.hoodPosition = (MAX_HOOD_ANGLE - hoodAngle) / (MAX_HOOD_ANGLE - MIN_HOOD_ANGLE); // map 65 deg to 0, 17.5 deg to 1
-        this.turretAngleRad = turretAngleFieldRel - robotPose.heading();
+        this.turretAngleRad = Angle.normalizeSigned(turretAngleFieldRel - (robotPose.heading() + Math.PI));
+    }
+
+    @Override
+    public void debug() {
+        r.telemetry.addData("Shooter Commanded Vel", launchVel3D);
     }
 
     public double getFlywheelTPS() {

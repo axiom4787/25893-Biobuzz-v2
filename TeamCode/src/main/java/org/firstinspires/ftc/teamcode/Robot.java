@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode;
 
+
 import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.*;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.Scheduler;
+import com.pedropathing.ivy.behaviors.ConflictBehavior;
 import com.pedropathing.ivy.pedro.PedroCommands;
 import com.pedropathing.paths.Path;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,7 +22,9 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.subsystems.Blocker;
 import org.firstinspires.ftc.teamcode.subsystems.Drivetrain;
 import org.firstinspires.ftc.teamcode.subsystems.FlowerDescorer;
+import org.firstinspires.ftc.teamcode.subsystems.Hood;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Lights;
 import org.firstinspires.ftc.teamcode.subsystems.SOTM;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Transfer;
@@ -32,6 +39,7 @@ public class Robot {
     public final OpMode o;
     public final HardwareMap hardwareMap;
     public final Telemetry telemetry;
+    public final Gamepad gamepad;
 
     private final List<LynxModule> allHubs;
     private final ElapsedTime loopTimer = new ElapsedTime();
@@ -44,12 +52,15 @@ public class Robot {
     public final FlowerDescorer descorer;
     public final Shooter shooter;
     public final Turret turret;
+    public final Hood hood;
     public final SOTM sotm;
+    public final Lights lights;
 
     public Robot(OpMode o) {
         this.o = o;
-        telemetry = o.telemetry;
+        telemetry = new MultipleTelemetry(o.telemetry, FtcDashboard.getInstance().getTelemetry());
         hardwareMap = o.hardwareMap;
+        gamepad = o.gamepad1;
 
         drivetrain = new Drivetrain(this);
         intake = new Intake(this);
@@ -58,7 +69,9 @@ public class Robot {
         descorer = new FlowerDescorer(this);
         shooter = new Shooter(this);
         turret = new Turret(this);
+        hood = new Hood(this);
         sotm = new SOTM(this);
+        lights = new Lights(this);
 
         allHubs = o.hardwareMap.getAll(LynxModule.class);
         allHubs.forEach((m) -> m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
@@ -73,9 +86,11 @@ public class Robot {
             transfer.periodic();
             blocker.periodic();
             descorer.periodic();
-//            shooter.periodic();
-//            turret.periodic();
+            shooter.periodic();
+            turret.periodic();
+            hood.periodic();
             sotm.periodic();
+            lights.periodic();
         }));
 
         loopTimer.reset();
@@ -95,9 +110,11 @@ public class Robot {
         transfer.debug();
         blocker.debug();
         descorer.debug();
-//        shooter.debug();
-//        turret.debug();
+        shooter.debug();
+        turret.debug();
+        hood.debug();
         sotm.debug();
+        lights.debug();
 
         telemetry.addData("Misc - Last loop time (ms)", lastLoopTime);
         telemetry.update();
@@ -111,20 +128,54 @@ public class Robot {
     /// Shoot all possessed game elements (for Constants.SHOOT_TIME plus additionalShootTime)
     public Command shootAll(double additionalShootTime) {
         return sequential(
-                shooter.enable(),
-                race(
-                        waitUntil(shooter::isReady), // wait to get up to speed
-                        waitMs(800) // wait a max of 800ms to spin up
-                ).unless(shooter::isReady), // ... unless the shooter is already ready
-                transfer.in(),
+//                shooter.enable(),
+//                race(
+//                        waitUntil(shooter::isReady), // wait to get up to speed
+//                        waitMs(800) // wait a max of 800ms to spin up
+//                ).unless(shooter::isReady), // ... unless the shooter is already ready
                 blocker.unblock(),
+                intake.in(),
+                transfer.in(),
                 waitMs(Constants.SHOOT_TIME + additionalShootTime),
-                transfer.idle(),
-                blocker.block()
-        ).requiring(shooter, transfer);
+                blocker.block(),
+                intake.idle(),
+                transfer.idle()
+        ).requiring(shooter, transfer, blocker, shooter);
     }
 
-    /// Lower the flower descorer and run the intake until the command is interrupted
+    public Command shoot() {
+        return new CommandBuilder()
+                .setStart(() -> Scheduler.schedule(
+                        blocker.unblock(),
+                        intake.in(),
+                        transfer.in()
+                ))
+                .setDone(() -> false)
+                .setEnd((endCondition) -> Scheduler.schedule(
+                        blocker.block(),
+                        intake.idle(),
+                        transfer.idle()
+                ))
+                .requiring(blocker, intake, transfer)
+                .setConflictBehavior(ConflictBehavior.CANCEL)
+                .setPriority(10);
+    }
+
+    public Command uncollect() {
+        return new CommandBuilder()
+                .setStart(() -> Scheduler.schedule(
+                        intake.out(),
+                        transfer.out()
+                ))
+                .setEnd((endCondition) -> Scheduler.schedule(
+                        intake.idle(),
+                        transfer.idle()
+                ))
+                .requiring(intake, transfer)
+                .setConflictBehavior(ConflictBehavior.CANCEL)
+                .setPriority(7);
+    }
+
     public Command collectGround() {
         return new CommandBuilder()
                 .setStart(() -> Scheduler.schedule(
@@ -136,10 +187,11 @@ public class Robot {
                         intake.idle(),
                         transfer.idle()
                 ))
-                .requiring(intake, transfer, blocker);
+                .requiring(intake, transfer, blocker)
+                .setConflictBehavior(ConflictBehavior.CANCEL)
+                .setPriority(8);
     }
 
-    /// Run the intake until the command is interrupted
     public Command collectFlower() {
         return new CommandBuilder()
                 .setStart(() -> Scheduler.schedule(
@@ -153,7 +205,9 @@ public class Robot {
                         transfer.idle(),
                         descorer.stow()
                 ))
-                .requiring(intake, transfer, descorer, blocker);
+                .requiring(intake, transfer, blocker, descorer)
+                .setConflictBehavior(ConflictBehavior.CANCEL)
+                .setPriority(9);
     }
 
     /// Disable the robot

@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.opmodes.auto;
 
+
 import static com.pedropathing.api.Paths.*;
 import static com.pedropathing.ivy.commands.Commands.*;
 import static com.pedropathing.ivy.groups.Groups.*;
 
 import com.pedropathing.api.PoseFactory;
+import com.pedropathing.follower.Follower;
 import com.pedropathing.ivy.Scheduler;
 import com.pedropathing.math.Pose;
 import com.pedropathing.paths.Path;
@@ -24,40 +26,33 @@ public class Auto1 extends LinearOpMode {
         waitForStart();
 
         robot.start();
+        robot.drivetrain.setPose(p.of(25.000, 9.250, 180));
 
         Scheduler.schedule(sequential(
+                robot.shooter.enable(),
+                waitMs(2000),
                 robot.shootAll(),
 
-                race( // Go to the garden (and wait a little) while collecting pollen from the ground
-                        sequential(
-                                robot.follow(Paths.START_TO_GARDEN),
-                                waitMs(Constants.GARDEN_INTAKE_TIME)
-                        ),
+                sequential(
+                        robot.follow(Paths.StartGeorge),
+                        waitMs(Constants.GARDEN_INTAKE_TIME)
+                ).raceWith(
                         robot.collectGround()
                 ),
 
-                robot.follow(Paths.GARDEN_TO_LEFT_HIVE_SCORE),
                 robot.shootAll(),
 
-                race( // Move to alliance wall flower and descore it by running the intake and transfer
-                        sequential(
-                                robot.follow(Paths.LEFT_HIVE_SCORE_TO_ALLIANCE_FLOWER),
-                                waitMs(Constants.FLOWER_INTAKE_TIME)
-                        ),
+                robot.follow(Paths.GeorgeLScore),
+
+                sequential(
+                        waitMs(1000),
+                        robot.follow(Paths.LScoreFred),
+                        robot.follow(Paths.FredPark)
+                ).raceWith(
                         robot.collectFlower()
                 ),
 
-                robot.follow(Paths.ALLIANCE_FLOWER_TO_LEFT_HIVE_SCORE),
                 robot.shootAll(),
-
-                robot.descorer.deploy(),
-                robot.follow(Paths.LEFT_HIVE_SCORE_TO_OTHER_FLOWER),
-                robot.intake.in(),
-                robot.shootAll(Constants.FLOWER_INTAKE_TIME),
-                robot.intake.idle(),
-                waitMs(Constants.FLOWER_INTAKE_TIME + Constants.SHOOT_TIME),
-                robot.follow(Paths.OTHER_FLOWER_TO_PARK),
-                robot.descorer.stow(),
 
                 robot.disable()
         ));
@@ -68,23 +63,38 @@ public class Auto1 extends LinearOpMode {
         }
     }
 
-    private static class Paths {
-        private static final PoseFactory f = PoseFactory.degrees();
+    /* ============================================================= *
+     *                 Turtle Tracer — Auto-Generated                *
+     *                                                               *
+     *  Version: 2.6.1.                                              *
+     *  Copyright (c) 2026 Matthew Allen                             *
+     *                                                               *
+     *  THIS FILE IS AUTO-GENERATED — DO NOT EDIT MANUALLY.          *
+     *  Changes will be overwritten when regenerated.                *
+     * ============================================================= */
 
-        private static final Pose START = f.of(58, 8.75, 180);
-        private static final Pose START_GARDEN_CTRL = f.of(15, 32, 0);
-        private static final Pose GARDEN = f.of(8.75, 8.75, -90);
-        private static final Path START_TO_GARDEN = curve(START, START_GARDEN_CTRL, GARDEN).linear(START, GARDEN);
-        private static final Pose LEFT_HIVE_ALLIANCE_FLOWER_CTRL = f.of(32, 47, 0);
-        private static final Pose ALLIANCE_FLOWER = f.of(15, 47, 180);
-        private static final Pose LEFT_HIVE_SCORE = f.of(39, 111, 90);
+    private static final PoseFactory p = PoseFactory.degrees();
 
-        private static final Path GARDEN_TO_LEFT_HIVE_SCORE = line(GARDEN, LEFT_HIVE_SCORE).linear(GARDEN, LEFT_HIVE_SCORE);
-        private static final Path LEFT_HIVE_SCORE_TO_ALLIANCE_FLOWER = curve(LEFT_HIVE_SCORE, LEFT_HIVE_ALLIANCE_FLOWER_CTRL, ALLIANCE_FLOWER).linear(LEFT_HIVE_SCORE, ALLIANCE_FLOWER);
-        private static final Path ALLIANCE_FLOWER_TO_LEFT_HIVE_SCORE = line(ALLIANCE_FLOWER, LEFT_HIVE_SCORE).linear(ALLIANCE_FLOWER, LEFT_HIVE_SCORE.withHeading(90));
-        private static final Pose OTHER_FLOWER = f.of(46, 126, 90);
-        private static final Path LEFT_HIVE_SCORE_TO_OTHER_FLOWER = line(LEFT_HIVE_SCORE, OTHER_FLOWER).linear(LEFT_HIVE_SCORE.withHeading(90), OTHER_FLOWER);
-        private static final Pose PARK = f.of(13, 97, 90);
-        private static final Path OTHER_FLOWER_TO_PARK = line(OTHER_FLOWER, PARK).linear(OTHER_FLOWER, PARK);
+    public static class Paths {
+        public static Path StartGeorge = line(
+                p.of(25.000, 9.250, 180),
+                p.of(11.500, 9.250, 0.0)
+        ).constant(Math.toRadians(180));
+        public static Path GeorgeLScore = curve(
+                p.of(10.250, 9.250, 0.0),
+                p.of(23.708, 72.579, 0.0),
+                p.of(19.163, 55.763, 0.0),
+                p.of(48.500, 123.000, 0.0)
+        ).linear(Math.toRadians(180), Math.toRadians(90));
+        public static Path LScoreFred = line(
+                p.of(48.500, 123.000, 0.0),
+                p.of(48.500, 128.250, 0.0)
+        ).linear(Math.toRadians(90), Math.toRadians(90));
+        public static Path FredPark = curve(
+                p.of(48.500, 128.250, 0.0),
+                p.of(38.422, 87.991, 0.0),
+                p.of(26.546, 88.481, 0.0),
+                p.of(12.500, 90.500, 0.0)
+        ).linear(Math.toRadians(90), Math.toRadians(0));
     }
 }

@@ -24,12 +24,12 @@ public class Shooter extends Subsystem {
     private double targetVelocity = 0;
 
     private final Controller velocityController = Controller.sum(
-            Controller.staticFeedforward(0.01),
-            Controller.proportionalFeedforward(0.01),
-            Controller.pid(0.0000, 0, 0.0)
+            Controller.staticFeedforward(0.02),
+            Controller.proportionalFeedforward(0.00047),
+            Controller.pid(0.005, 0, 0.0)
     );
 
-    private static final double VOLTAGE_WHEN_TUNED = 13.0;
+    private static final double VOLTAGE_WHEN_TUNED = 13.6;
 
     public Shooter(Robot r) {
         super(r);
@@ -63,17 +63,49 @@ public class Shooter extends Subsystem {
 
     @Override
     public void periodic() {
+        double slope = (1160 - 1040.0) / (60 - 35);
+        double t = 0;
+        double dist = r.drivetrain.getDistanceToGoal();
+        if (dist <= 35) {
+            t = 1040;
+        } else if (dist >= 60) {
+            t = 1160;
+        } else {
+            t = slope * (dist - 35) + 1040;
+        }
+        targetVelocity = t;
+
         if (!active) {
             shooter.setPower(0);
         } else {
-            targetVelocity = r.sotm.getFlywheelTPS();
+//            if (r.gamepad.dpadUpWasPressed()) {
+//                targetVelocity += 20;
+//            } else if (r.gamepad.dpadDownWasPressed()) {
+//                targetVelocity -= 20;
+//            } else if (r.gamepad.dpadLeftWasPressed()) {
+//                targetVelocity -= 200;
+//            } else if (r.gamepad.dpadRightWasPressed()) {
+//                targetVelocity += 200;
+//            } else if (r.gamepad.y) {
+//                targetVelocity = 0;
+//            }
+
+//            targetVelocity = r.sotm.getFlywheelTPS();
+//            targetVelocity = 1120;
+
             double velocityError = getVelocityError();
             double power = velocityController.calculate(targetVelocity, velocityError);
 
             double currentVoltage = voltageSensor.getVoltage();
             power = power * (VOLTAGE_WHEN_TUNED / currentVoltage);
-            shooter.setPower(power);
+            if (targetVelocity == 0) {
+                shooter.setPower(0);
+            } else {
+                shooter.setPower(power);
+            }
         }
+
+        r.telemetry.addData("dist to goal", r.drivetrain.getDistanceToGoal());
     }
 
     @Override

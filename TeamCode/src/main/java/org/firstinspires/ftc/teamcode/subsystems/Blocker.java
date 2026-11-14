@@ -18,23 +18,32 @@ public class Blocker extends Subsystem {
     private static final double BLOCKING_POSITION = 0.25;
     private static final double UNBLOCKING_POSITION = 0.5;
 
+    private boolean isBlocking = false;
+
     public Blocker(Robot r) {
         super(r);
 
         blocker = new CachingServo(r.hardwareMap.get(Servo.class, "blocker"));
-        blocker.setPosition(UNBLOCKING_POSITION);
+
+        block().schedule();
     }
 
     public Command block() {
-        return instant(() -> blocker.setPosition(BLOCKING_POSITION));
+        return instant(() -> {
+            blocker.setPosition(BLOCKING_POSITION);
+            isBlocking = true;
+        });
     }
 
     public Command unblock() {
-        return instant(() -> blocker.setPosition(UNBLOCKING_POSITION));
+        return instant(() -> {
+            blocker.setPosition(UNBLOCKING_POSITION);
+            isBlocking = false;
+        });
     }
 
     public boolean isBlocking() {
-        return blocker.getPosition() == BLOCKING_POSITION;
+        return isBlocking;
     }
 
     @Override

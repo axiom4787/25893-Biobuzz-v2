@@ -13,10 +13,11 @@ import org.firstinspires.ftc.teamcode.util.Subsystem;
 public class Lights extends Subsystem {
     private final GoBildaPrismDriver lights;
 
-    private State state;
+    private State state = State.OFF;
 
     private enum State {
-        AIM_BAR_FULL(10),
+        AIM_BAR_FULL(12),
+        AIM_BAR_10(10),
         AIM_BAR_8(8),
         AIM_BAR_6(6),
         AIM_BAR_4(4),
@@ -37,22 +38,28 @@ public class Lights extends Subsystem {
     }
 
     private static final PrismAnimations.Solid RED_BACKGROUND = new PrismAnimations.Solid(Color.RED);
+    static {
+        RED_BACKGROUND.setBrightness(50);
+    }
+
 
     public Lights(Robot r) {
         super(r);
 
         lights = r.hardwareMap.get(GoBildaPrismDriver.class, "lights");
-        lights.setStripLength(20);
-        state = State.OFF;
+        lights.setStripLength(24);
+
+        state = State.AIM_BAR_EMPTY;
     }
 
     private PrismAnimations.Solid greenBar(int width) {
         PrismAnimations.Solid greenBar = new PrismAnimations.Solid(Color.GREEN);
 
-        int startIndex = (10 - width) / 2;
+        int startIndex = (12 - width) / 2;
         int stopIndex = startIndex + width - 1;
 
         greenBar.setIndexes(startIndex, stopIndex);
+        greenBar.setBrightness(50);
 
         return greenBar;
     }
@@ -68,9 +75,11 @@ public class Lights extends Subsystem {
             state = State.SHOOTING;
         } else if (!r.turret.canAchieveUnclippedTarget()) {
             state = State.OUTSIDE_TURRET_RANGE;
-        } else if (turretErrDeg <= 2) {
+        } else if (turretErrDeg <= 1) {
             state = State.AIM_BAR_FULL;
-        } else if (turretErrDeg <= 5) {
+        } else if (turretErrDeg <= 2) {
+            state = State.AIM_BAR_10;
+        } else if (turretErrDeg <= 4) {
             state = State.AIM_BAR_8;
         } else if (turretErrDeg <= 8) {
             state = State.AIM_BAR_6;
@@ -85,19 +94,27 @@ public class Lights extends Subsystem {
         if (state == lastState) return;
 
         lights.clearAllAnimations();
+        r.telemetry.addLine("lights updating");
 
         if (state.aimBarWidth != State.NO_BAR_SENTINEL) {
             lights.insertAnimation(LayerHeight.LAYER_0, RED_BACKGROUND);
             lights.insertAnimation(LayerHeight.LAYER_1, greenBar(state.aimBarWidth));
         } else if (state == State.OUTSIDE_TURRET_RANGE) {
             PrismAnimations.Blink purpleBlink = new PrismAnimations.Blink(Color.PURPLE);
+            purpleBlink.setBrightness(50);
+
             lights.insertAnimation(LayerHeight.LAYER_0, purpleBlink);
         } else if (state == State.OUTSIDE_LAUNCH_ZONE) {
             PrismAnimations.Solid solidYellow = new PrismAnimations.Solid(Color.YELLOW);
+            solidYellow.setBrightness(50);
+
             lights.insertAnimation(LayerHeight.LAYER_0, solidYellow);
         } else if (state == State.SHOOTING) {
             PrismAnimations.Rainbow rainbow = new PrismAnimations.Rainbow();
+            rainbow.setBrightness(50);
             lights.insertAnimation(LayerHeight.LAYER_0, rainbow);
+        } else {
+            r.telemetry.addLine("bad lights state");
         }
 
         lights.updateAllAnimations();
