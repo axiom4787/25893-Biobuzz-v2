@@ -97,7 +97,11 @@ public class Shooter extends Subsystem {
             double power = velocityController.calculate(targetVelocity, velocityError);
 
             double currentVoltage = voltageSensor.getVoltage();
-            power = power * (VOLTAGE_WHEN_TUNED / currentVoltage);
+            if (currentVoltage > 0) {
+                power = power * (VOLTAGE_WHEN_TUNED / currentVoltage);
+            } else {
+                power = 0;
+            }
             if (targetVelocity == 0) {
                 shooter.setPower(0);
             } else {
