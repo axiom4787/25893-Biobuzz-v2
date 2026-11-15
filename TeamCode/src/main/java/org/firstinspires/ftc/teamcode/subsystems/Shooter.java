@@ -18,8 +18,7 @@ import dev.frozenmilk.dairy.cachinghardware.CachingDcMotorEx;
 
 public class Shooter extends Subsystem {
     private final CachingDcMotorEx shooter;
-    private final VoltageSensor voltageSensor;
-
+    private VoltageSensor voltageSensor;
     private boolean active = true;
     private double targetVelocity = 0;
 
@@ -30,6 +29,8 @@ public class Shooter extends Subsystem {
     );
 
     private static final double VOLTAGE_WHEN_TUNED = 13.6;
+    private static final double DEFAULT_VOLTAGE = 12.5;
+    private boolean voltageSensorInitialized = false;
 
     public Shooter(Robot r) {
         super(r);
@@ -38,7 +39,19 @@ public class Shooter extends Subsystem {
         shooter.setDirection(DcMotorSimple.Direction.FORWARD); // TODO: Verify direction
         shooter.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        voltageSensor = r.hardwareMap.voltageSensor.iterator().next();
+        initVoltageSensor(); // TODO: move this call to optimal location in robot init
+    }
+
+    public void initVoltageSensor() {
+        for (VoltageSensor v : r.hardwareMap.voltageSensor) {
+            try {
+                if (v.getVoltage() > 0.0) {
+                    voltageSensor = v;
+                    voltageSensorInitialized = true;
+                    break;
+                }
+            } catch (Exception ignored) {}
+        }
     }
 
     public Command disable() {
@@ -96,17 +109,23 @@ public class Shooter extends Subsystem {
             double velocityError = getVelocityError();
             double power = velocityController.calculate(targetVelocity, velocityError);
 
-            double currentVoltage = voltageSensor.getVoltage();
-            if (currentVoltage > 0) {
-                power = power * (VOLTAGE_WHEN_TUNED / currentVoltage);
-            } else {
-                power = 0;
+            double currentVoltage = DEFAULT_VOLTAGE;
+            if (voltageSensorInitialized) {
+                try {
+                    double sensorVoltage = voltageSensor.getVoltage();
+                    if (sensorVoltage > 0)
+                        currentVoltage = sensorVoltage;
+                } catch (Exception ignored) {}
             }
+
+            power = power * (VOLTAGE_WHEN_TUNED / currentVoltage);
+
             if (targetVelocity == 0) {
                 shooter.setPower(0);
             } else {
                 shooter.setPower(power);
             }
+
         }
     }
 
