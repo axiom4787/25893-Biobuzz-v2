@@ -30,6 +30,7 @@ import org.firstinspires.ftc.teamcode.subsystems.SOTM;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Transfer;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
+import org.firstinspires.ftc.teamcode.subsystems.LimeLight;
 import org.firstinspires.ftc.teamcode.util.Constants;
 
 import java.util.List;
@@ -59,6 +60,7 @@ public class Robot {
     public final Hood hood;
     public final SOTM sotm;
     public final Lights lights;
+    public final LimeLight limeLight;
 
     public Robot(OpMode o) {
         this.o = o;
@@ -76,6 +78,7 @@ public class Robot {
         hood = new Hood(this);
         sotm = new SOTM(this);
         lights = new Lights(this);
+        limeLight = new LimeLight(this, drivetrain.follower());
 
         allHubs = o.hardwareMap.getAll(LynxModule.class);
         allHubs.forEach((m) -> m.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL));
@@ -94,6 +97,7 @@ public class Robot {
             turret.periodic();
             hood.periodic();
             sotm.periodic();
+            limeLight.periodic();
 //            lights.periodic();
         }));
 
@@ -123,6 +127,7 @@ public class Robot {
         hood.debug();
         sotm.debug();
         lights.debug();
+        limeLight.debug();
 
         telemetry.addData("Misc - Last loop time (ms)", lastLoopTime);
         telemetry.update();
