@@ -34,6 +34,7 @@ import org.firstinspires.ftc.teamcode.subsystems.LimeLight;
 import org.firstinspires.ftc.teamcode.util.Constants;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 
 
@@ -133,23 +134,24 @@ public class Robot {
         telemetry.update();
     }
 
+
+    /// In theory this should set the robot's pose to the last opmode's last robot pose
     public void usePreviousOpModePose() {
         drivetrain.setPose(poseStorage);
     }
 
-    /// Shoot all possessed game elements (for Constants.SHOOT_TIME)
+
+    /// Shoot all possessed game elements.
+    /// Runs for a configured amount of time.
     public Command shootAll() {
         return shootAll(0);
     }
 
-    /// Shoot all possessed game elements (for Constants.SHOOT_TIME plus additionalShootTime)
+
+    /// Shoot all possessed game elements.
+    /// Runs for a configured amount of time + `additionalShootTime`.
     public Command shootAll(double additionalShootTime) {
         return sequential(
-//                shooter.enable(),
-//                race(
-//                        waitUntil(shooter::isReady), // wait to get up to speed
-//                        waitMs(800) // wait a max of 800ms to spin up
-//                ).unless(shooter::isReady), // ... unless the shooter is already ready
                 blocker.unblock(),
                 intake.in(),
                 transfer.in(),
@@ -160,6 +162,9 @@ public class Robot {
         ).requiring(shooter, transfer, blocker, shooter);
     }
 
+
+    /// Shoot.
+    /// Runs until interrupted.
     public Command shoot() {
         return new CommandBuilder()
                 .setStart(() -> Scheduler.schedule(
@@ -178,6 +183,9 @@ public class Robot {
                 .setPriority(10);
     }
 
+
+    /// Outtake by reversing the intake and transfer in case of intaking nectar or overposession.
+    /// Runs until interrupted.
     public Command uncollect() {
         return new CommandBuilder()
                 .setStart(() -> Scheduler.schedule(
@@ -193,6 +201,9 @@ public class Robot {
                 .setPriority(7);
     }
 
+
+    /// Collect pollen from the ground by running the intake.
+    /// Runs until interrupted.
     public Command collectGround() {
         return new CommandBuilder()
                 .setStart(() -> Scheduler.schedule(
@@ -209,6 +220,8 @@ public class Robot {
                 .setPriority(8);
     }
 
+
+    /// Collect pollen from flowers by lowering the descorer and running the intake.
     public Command collectFlower() {
         return new CommandBuilder()
                 .setStart(() -> Scheduler.schedule(
@@ -227,6 +240,7 @@ public class Robot {
                 .setPriority(9);
     }
 
+
     /// Disable the robot
     public Command disable() {
         return instant(() -> Scheduler.schedule(
@@ -237,6 +251,7 @@ public class Robot {
                 instant(() -> drivetrain.follower().stop())
         )).setPriority(25893).requiring(intake, transfer, blocker, descorer, turret, shooter, drivetrain);
     }
+
 
     /// Follow a path
     public Command follow(Path path) {
